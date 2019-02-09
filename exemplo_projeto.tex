@@ -40,7 +40,7 @@
 \begin{document}
   \title{Título da Tese}
   \foreigntitle{Thesis Title}
-  \author{Nome do Autor}{Sobrenome}
+  \author{Lucas}{Schlee de Brito Fernandes}
   \advisor{Prof.}{Nome do Primeiro Orientador}{Sobrenome}{D.Sc.}
   \advisor{Prof.}{Nome do Segundo Orientador}{Sobrenome}{Ph.D.}
   \advisor{Prof.}{Nome do Terceiro Orientador}{Sobrenome}{D.Sc.}
@@ -53,7 +53,7 @@
   
   
   
-  \department{EET}% Confira a tabela a seguir para saber como preencher o comando \department de acordo com seu curso (Graduação - Poli) ou programa (Pós-Graduação - COPPE).
+  \department{ECA}% Confira a tabela a seguir para saber como preencher o comando \department de acordo com seu curso (Graduação - Poli) ou programa (Pós-Graduação - COPPE).
   
   %%%%%% Para alunos da POLI %%%%%%
   
@@ -133,19 +133,71 @@
   \mainmatter
 %  \doublespacing
   \chapter{Introdução}
+  
+  \section{Tema}
+    
+    \paragraph{}O projeto consiste na aplicação de inteligência articificial às negociações de alta frequência no mercado financeiro (High Frequency Trading). Nesse contexto, o problema a ser resolvido é o levantamento de padrões de mercado que indiquem uma previsão futura, a curto prazo, de uma variação positiva no preço de um determinado ativo.
+    
+  \section{Delimitação}
 
-  Segundo a norma de formatação de teses e dissertações do
+    \paragraph{}Toda a base de dados construída para o presente trabalho foi proveniente dos dados reais negociados na Bolsa de Valores de São Paulo (BM\&FBOVESPA), que são de domínio público. 
+    
+    \paragraph{}Por conta da granularidade dos dados obtidos pela fonte acima, um posterior trabalho de pré-processamento precisou ser feito para que os dados fossem agrupados em pequenos intervalos de tempo e, dessa forma, pudessem ter maior valor para o modelo.
+  
+  \section{Justificativa}
+  
+    \paragraph{}Algoritmos de negociação vêm ganhando cada vez mais força conforme a globalização se intensifica. Nos Estados Unidos, estima-se que aproximadamente ${65\%}$ de todo o volume negociado na bolsa de valores seja movimentado por agentes autônomos (robôs) executando algoritmos de HFT (High Frequency Trading).  
+  
+    \paragraph{}Apesar do conceito de HFT já estar difundido e vastamente aplicado, grande parte das estratégias desse grupo de algoritmos baseia-se em análises fundamentalistas de mercado, exigindo um conhecimento aprofundado do domínio e um refinamento milimetricamente calibrado na implementação de regras que irão executar a negociação. 
+    
+    \paragraph{}Ainda assim, um algoritmo que executa puramente um conjunto de regras não é totalmente seguro para realizar negociações. Dessa forma, a aplicação de técnicas de aprendizado de máquina podem auxiliar no poder preditivo desses algoritmos, identificando padrões passados e gerando sinais para tomadas de decisão mais seguras.
+    
+  \section{Objetivos}
+  
+    \paragraph{}O objetivo do trabalho é desenvolver e modelar estratégias direcionais de negociação de alta frequência, ou seja, indicar se um determinado ativo apresentará alta no período imediatamente após o intervalo em que foi analisado. Sendo assim, se o modelo indicar que haverá alta, será enviada uma ordem de compra à mercado e uma ordem de venda à mercado assim que o preço do ativo sendo avaliado ultrapassar um limiar de preço ou intervalo de tempo pré-determinado. 
+  
+  \section{Metodologia}
+  
+    \paragraph{}Com o intuito de otimizar o pré-processamento dos dados brutos da bolsa de valores, inicialmente agrupados em \textit{ticks}, foi implementada uma solução em \textit{C\#} utilizando o \textit{framework} multiplataforma \textit{.NET Core}, podendo ser executado em todos os sistemas operacionais. Por ser uma linguagem compilada e performática, obteve-se um bom desempenho na descompactação dos arquivos comprimidos contendo as negociações, no processamento dos dados e na exclusão posterior do arquivo descompactado para economizar memória em disco.
+    
+    \paragraph{}A principal função dessa etapa de pré-processamento dos dados brutos é o agrupamento em janelas de tempo para que indicadores de análise técnica, geralmente aplicados em intervalos diários, pudessem ser aplicados em intervalos de minutos. Dessa forma, o intervalo pode conter informações históricas a partir desses indicadores, gerando, por exemplo, valores de médias móveis ou indicadores que dependam de intervalos anteriores. 
+    
+    \paragraph{}A saída do modelo, \textbf{y}, pode assumir valores de 1 e 0, indicando que deve ou não ser enviada uma ordem de compra ou, mais precisamente, que haverá alta ou baixa no preço do ativo no próximo minuto, respectivamente.
+    
+    \paragraph{}Após a etapa de agrupamento dos dados e geração de indicadores, os dados são enviados para um arquivo \textit{CSV (Comma-Separated Values)} para serem consumidos pelo modelo.
+    
+    \paragraph{}Na etapa de consumo dos dados gerados, foi utilizada a linguagem de programação \textit{Python} e algumas bibliotecas orientadas para a ciência de dados, como o \textit{scikit-learn}, \textit{Pandas}, \textit{Numpy}, \textit{Seaborn} e \textit{MatplotLib}.
+    
+    \paragraph{}Com o auxílio das diversas opções de normalização dos dados oferecidas pelo \textit{scikit-learn}, foram feitas normalizações logarítmicas e de máximo e mínimo para as \textit{features} o conjunto de dados. Dessa forma, todas as variáveis de entrada do modelo possuíam variações entre 0 e 1.
+    
+    \paragraph{}Através do \textit{scikit-learn}, também foram utilizados modelos de aprendizado de máquina supervisionado para a previsão dos dados de teste. Dessa maneira, o MLP (\textit{MultiLayer Perceptron}) e a Regressão Logística foram escolhidos como modelos para a previsão dos dados.
+    
+    \paragraph{}Por fim, para a validação dos modelos obtidos, foi utilizada uma variação da validação cruzada para séries temporais, de forma que, para um determinado intervalo de tempo, os dados de testes fossem sempre futuros em relação aos dados de treino.
+  
+  \section{Descrição}
+  
+    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre HFT, assim como a contextualização sobre a "leitura de fita", base para entender o conjunto bruto de dados e realizar seu futuro pré-processamento.
+    
+    \paragraph{}O capítulo 3 introduz as informações provenientes dos dados brutos da BM\&FBOVESPA, assim como as técnicas utilizadas para pré-processá-los. Nele, também serão discutidos os diversos indicadores de análise técnicas aproveitados como \textit{features} no modelo e como foi realizada a normalização desses indicadores.
+    
+    \paragraph{}No capítulo 4, são discutidos os modelos utilizados para a previsão dos dados de teste e as técnicas de validação utilizadas.
+    
+    \paragraph{}O capítulo 5 mostra os resultados e discussões obtidos para um determinado ativo do mercado brasileiro.
+    
+    \paragraph{}Por fim, no capítulo 6 são levantadas as conclusões do projeto, indicando as limitações encontradas e sugestões para evoluções do trabalho realizado.
+  
+  \section{Exemplo}
+    Segundo a norma de formatação de teses e dissertações do
   Instituto Alberto Luiz Coimbra de Pós-graduação e Pesquisa de
   Engenharia (COPPE), toda abreviatura deve ser definida antes de
   utilizada.\abbrev{COPPE}{Instituto Alberto Luiz Coimbra de Pós-graduação e Pesquisa de Engenharia}
-
-  Do mesmo modo, é imprescindível definir os símbolos, tal como o
+  
+    Do mesmo modo, é imprescindível definir os símbolos, tal como o
   conjunto dos números reais $\mathbb{R}$ e o conjunto vazio $\emptyset$.
   \symbl{$\mathbb{R}$}{Conjunto dos números reais}
   \symbl{$\emptyset$}{Conjunto vazio}
-  
-  Você deve selecionar seu curso de engenharia usando o comando \texttt{\textbackslash department\{Sigla\}} e no lugar de Sigla inserir a sigla referente ao seu curso de engenharia. A tabela \ref{tab:courses} relaciona as siglas dos cursos de engenharia da Escola Politécnica da Universidade Federal do Rio de Janeiro (POLI-UFRJ), enquanto que a tabela \ref{tab:programs} relaciona as siglas dos programas de pós graduação da COPPE.\abbrev{POLI-UFRJ}{Escola Politécnica da Universidade Federal do Rio de Janeiro}
-  
+    
+    Você deve selecionar seu curso de engenharia usando o comando \texttt{\textbackslash department\{Sigla\}} e no lugar de Sigla inserir a sigla referente ao seu curso de engenharia. A tabela \ref{tab:courses} relaciona as siglas dos cursos de engenharia da Escola Politécnica da Universidade Federal do Rio de Janeiro (POLI-UFRJ), enquanto que a tabela \ref{tab:programs} relaciona as siglas dos programas de pós graduação da COPPE.\abbrev{POLI-UFRJ}{Escola Politécnica da Universidade Federal do Rio de Janeiro}
   
   \begin{table}[h]
     \caption{Siglas dos cursos de engenharia da Escola Politécnica da UFRJ.}
