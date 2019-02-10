@@ -132,7 +132,7 @@
 
   \mainmatter
 %  \doublespacing
-  \chapter{Introdução}
+\chapter{Introdução}
   
   \section{Tema}
     
@@ -146,7 +146,7 @@
   
   \section{Justificativa}
   
-    \paragraph{}Algoritmos de negociação vêm ganhando cada vez mais força conforme a globalização se intensifica. Nos Estados Unidos, estima-se que aproximadamente ${65\%}$ de todo o volume negociado na bolsa de valores seja movimentado por agentes autônomos (robôs) executando algoritmos de HFT (High Frequency Trading).  
+    \paragraph{}Algoritmos de negociação vêm ganhando cada vez mais força conforme a globalização se intensifica. Nos Estados Unidos, estima-se que aproximadamente ${65\%}$ de todo o volume negociado na bolsa de valores seja movimentado por agentes autônomos (robôs) executando algoritmos de HFT (High Frequency Trading). Em 2012, no Brasil, o volume negociado por Acesso Direto ao Mercado, ou seja, plataformas que conectam o cliente final ao ambiente eletrônico de negociações da bolsa \cite{parceiros-dma}, movimentaram R\$$104,5$ milhões \cite{moreno-hft}. 
   
     \paragraph{}Apesar do conceito de HFT já estar difundido e vastamente aplicado, grande parte das estratégias desse grupo de algoritmos baseia-se em análises fundamentalistas de mercado, exigindo um conhecimento aprofundado do domínio e um refinamento milimetricamente calibrado na implementação de regras que irão executar a negociação. 
     
@@ -154,7 +154,7 @@
     
   \section{Objetivos}
   
-    \paragraph{}O objetivo do trabalho é desenvolver e modelar estratégias direcionais de negociação de alta frequência, ou seja, indicar se um determinado ativo apresentará alta no período imediatamente após o intervalo em que foi analisado. Sendo assim, se o modelo indicar que haverá alta, será enviada uma ordem de compra à mercado e uma ordem de venda à mercado assim que o preço do ativo sendo avaliado ultrapassar um limiar de preço ou intervalo de tempo pré-determinado. 
+    \paragraph{}O objetivo do trabalho é desenvolver e modelar estratégias direcionais de negociação de alta frequência, ou seja, indicar se um determinado ativo apresentará alta no período imediatamente após o intervalo em que foi analisado. Sendo assim, se o modelo indicar que haverá alta, um futuro agente autônomo enviará uma ordem de compra à mercado e uma ordem de venda à mercado assim que o preço do ativo sendo avaliado ultrapassar um limiar de preço ou intervalo de tempo pré-determinado. 
   
   \section{Metodologia}
   
@@ -176,7 +176,7 @@
   
   \section{Descrição}
   
-    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre HFT, assim como a contextualização sobre a "leitura de fita", base para entender o conjunto bruto de dados e realizar seu futuro pré-processamento.
+    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre o mercado de capitais e bolsa de valores, assim como são negociados seus ativos. Nele, também será feita uma contextualização das negociações de alta frequência e o que são algoritmos HFT.
     
     \paragraph{}O capítulo 3 introduz as informações provenientes dos dados brutos da BM\&FBOVESPA, assim como as técnicas utilizadas para pré-processá-los. Nele, também serão discutidos os diversos indicadores de análise técnicas aproveitados como \textit{features} no modelo e como foi realizada a normalização desses indicadores.
     
@@ -186,89 +186,37 @@
     
     \paragraph{}Por fim, no capítulo 6 são levantadas as conclusões do projeto, indicando as limitações encontradas e sugestões para evoluções do trabalho realizado.
   
-  \section{Exemplo}
-    Segundo a norma de formatação de teses e dissertações do
-  Instituto Alberto Luiz Coimbra de Pós-graduação e Pesquisa de
-  Engenharia (COPPE), toda abreviatura deve ser definida antes de
-  utilizada.\abbrev{COPPE}{Instituto Alberto Luiz Coimbra de Pós-graduação e Pesquisa de Engenharia}
-  
-    Do mesmo modo, é imprescindível definir os símbolos, tal como o
-  conjunto dos números reais $\mathbb{R}$ e o conjunto vazio $\emptyset$.
-  \symbl{$\mathbb{R}$}{Conjunto dos números reais}
-  \symbl{$\emptyset$}{Conjunto vazio}
-    
-    Você deve selecionar seu curso de engenharia usando o comando \texttt{\textbackslash department\{Sigla\}} e no lugar de Sigla inserir a sigla referente ao seu curso de engenharia. A tabela \ref{tab:courses} relaciona as siglas dos cursos de engenharia da Escola Politécnica da Universidade Federal do Rio de Janeiro (POLI-UFRJ), enquanto que a tabela \ref{tab:programs} relaciona as siglas dos programas de pós graduação da COPPE.\abbrev{POLI-UFRJ}{Escola Politécnica da Universidade Federal do Rio de Janeiro}
-  
-  \begin{table}[h]
-    \caption{Siglas dos cursos de engenharia da Escola Politécnica da UFRJ.}
-    \label{tab:courses}
-    \centering
-    {\footnotesize
-    \begin{tabular}{|c|c|}
-      \hline
-      Sigla & Curso\\
-      \hline
-      EA &  Engenharia Ambiental \\
-      ECV & Engenharia Civil\\
-      ECI & Engenharia de Computação e Informação \\
-      ECA & Engenharia de Controle e Automação \\
-      EMAT & Engenharia de Materiais\\
-      EPT & Engenharia de Petróleo\\
-      EPR & Engenharia de Produção\\
-      EEC & Engenharia Eletrônica e de Computação\\
-      EET & Engenharia Elétrica\\
-      EMC & Engenharia Mecânica\\
-      EMET & Engenharia Metalúrgica\\
-      ENO & Engenharia Naval e Oceânica\\
-      ENU & Engenharia Nuclear\\
-      \hline
-    \end{tabular}}
-    \end{table}
-    
-    
-  \begin{table}[h]
-  	\caption{Siglas dos programas de pós graduação da COPPE.}
-  	\label{tab:programs}
-  	\centering
-  	{\footnotesize
-  	\begin{tabular}{|c|c|}
-  		\hline
-  		Sigla & Curso\\
-  		\hline
-  		PEB & Engenharia Biomédica \\
-  		PEC & Engenharia Civil\\
-  		PEE & Engenharia Elétrica \\
-  		PEM & Engenharia Mecânica \\
-  		PEMM & Engenharia Metalúrgica e de Materiais\\
-  		PEN & Engenharia Nuclear\\
-  		PENO & Engenharia Oceânica\\
-  		PPE & Planejamento Energético\\
-  		PEP & Engenharia de Produção\\
-  		PEQ & Engenharia Química\\
-  		PESC & Engenharia de Sistemas e Computação\\
-  		PET & Engenharia de Transportes\\
-  		\hline
-  	\end{tabular}}
-  \end{table}
 
-
-  Note também que todas as figuras ou tabelas devem ser citadas no texto. Como ocorre com as tabelas \ref{tab:courses} e \ref{tab:programs}. Para ilustrar o uso de figuras em \LaTeX, considere as figuras \ref{fig:poli} e \ref{fig:coppe}.
+\chapter{Fundamentos Teóricos}
   
-   \begin{figure}
-      \centering
-      \includegraphics[width=5cm]{poli-logo.pdf}
-      \caption{Logotipo da POLI-UFRJ.}
-      \label{fig:poli}
-    \end{figure}
+    \paragraph{}Neste capítulo, são introduzidos alguns conceitos base para o entendimento e desenvolvimento do projeto. A seguir, são feitas contextualizações sobre o Mercado de Capitais, Bolsa de Valores e como as HFT se inserem nesse conexto.
     
-    \begin{figure}
-       \centering
-       \includegraphics[width=5cm]{coppe-logo.pdf}
-       \caption{Logotipo da COPPE.}
-       \label{fig:coppe}
-     \end{figure}
+    \section{Mercado de Capitais e Bolsa de Valores}
+        \paragraph{}O Mercado Capitais é um sistema de distribuição de valores imobiliários que permite potencializar o fluxo financeiro entre vários agentes econômicos, aumentando a liquidez dos vários títulos existentes. Esse mercado, formado por corretoras, bancos, bolsa de valores e outras insituições financeiras, facilita o investimento em grandes empreendimentos e permite aos diferenes agentes econômicos a compra de parte da empresa por meio de ações, que são as menores frações do capital social de uma empresa. As ações, por sua vez, são uma forma veloz de atração de investimento para que a empresa consiga reinvestir no seu próprio crescimento \cite{barreto-mercado-capitais}.
+        
+        \paragraph{}As operações que ocorrem no Mercado de Capitais possuem uma série de regras e procedimentos que garantem uma proteção para ambos os lados interessados. 
+        
+        \paragraph{}A bolsa de valores, principal instrumento do Mercado de Capitais, é um mercado organizado onde são negociadas ações de empresas com o capital aberto. Para tornar-se de capital aberto, a empresa precisa passar por uma Oferta Pública Inicial (IPO - \textit{Initial Public Offering}), em que suas ações são vendidas para o público geral numa bolsa de valores pela primeira vez \cite{pwc-ipo}. Ao abrir seu capital, a empresa disponibiliza seus números para que qualquer pessoa possa acompanhar seus balanços e sua evolução financeira ao longo do tempo.
+        
+        \paragraph{}Os acionistas da empresa podem obter lucro a partir de divindendos ou a partir da venda de suas ações, uma vez que estas estejam mais valorizadas do que quando o acionista comprou. A possibilidade de lucrar rapidamente com os movimentos do mercado atrai os especuladores, que apostam ou não na alta ou baixa de um determinado ativo baseado em diversas variáveis. Esses especuladores são importantes para o mercado pois aumentam a liquidez dos papéis negociados e determinam precisamente o preço de um determinado ativo.
+        
+        \paragraph{}Diante da volatilidade do mercado e com a intrínseca característica do lucro a curto prazo, estratégias de negociação de alta frequência começaram a surgir. Com o intuito de automatizar as negociações e, com isso, operar numa velocidade maior do que a humana, algoritmos HFT (\textit{High Frequency Trading}) se popularizaram e passaram a ocupar um espaço crescente nas diversas bolsas de valores.
+        
+    \section{Algoritmos HFT}
+        
+        \paragraph{}Algoritmos de negociação vem sido cada vez mais utilizados nas últimas décadas. Segundo \citet{chaboud-hft}, algoritmos de negociação classificam-se como uma interface direta entre computadores e plataformas de negociação, sendo capaz de posicionar ordens de compra e venda sem quaisquer intervenção humana.
+        
+        \paragraph{}O termo HFT, por sua vez, é mais recente e trata-se de um subgrupo dos algoritmos de negociação mencionados anteriormente. Esse grupo de algoritmos tem como característica a execução de operações de negociação a níveis de milissegundo.
+        
+        \paragraph{}O grupo de algoritmos de negociação e, portanto, as HFT, podem ser vistas como ferramentas para os \textit{traders} ou especuladores que observam parâmetros de mercado em tempo real para produzirem decisões de negociação. 
+        
+        \paragraph{}Algoritmos HFT tem como característica uma rápida atualização das ordens enviadas e não permanecem com a posição após o fechamento do pregão. As estratégias visam um lucro pequeno em um montante muito grande negociações, portanto é mais interessante performar em mercados com ativos de alta liquidez. Depois do algoritmo realizar uma ordem, seja esta de compra ou venda, o tempo em que a posição é mantida é curto \cite{gomber-hft}.
+        
+        \paragraph{}Grande parte desses algoritmos se utiliza de indicadores de análise técnica ou puramente derivadas da curva recente do preço para realizar suas operações, aliados a um conjunto de regras e estratégias pré-estabelecidas. Dessa maneira, torna-se interessante a aplicação de aprendizado de máquina na previsão de preços ou direcionamentos futuros para que a tomada de decisão torne-se mais segura e eficiente a longo prazo.
+        
+\chapter{Pré-processamento}    
 
-  \chapter{Revisão Bibliográfica}
+\chapter{Revisão Bibliográfica}
 
   Para ilustrar a completa adesão ao estilo de citações e listagem de
   referências bibliográficas, a Tabela \ref{tab:citation} apresenta citações de alguns dos trabalhos contidos na norma fornecida pela CPGP da
