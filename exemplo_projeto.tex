@@ -214,7 +214,141 @@
         
         \paragraph{}Grande parte desses algoritmos se utiliza de indicadores de análise técnica ou puramente derivadas da curva recente do preço para realizar suas operações, aliados a um conjunto de regras e estratégias pré-estabelecidas. Dessa maneira, torna-se interessante a aplicação de aprendizado de máquina na previsão de preços ou direcionamentos futuros para que a tomada de decisão torne-se mais segura e eficiente a longo prazo.
         
-\chapter{Pré-processamento}    
+    \section{Trabalhos Relacionados}
+        
+\chapter{Pré-processamento, Base de Dados e Estratégias}    
+
+    \paragraph{}Nesse capítulo são introduzidas as abordagens utilizadas para o pré-processamento e transformação dos dados brutos da BM\&FBOVESPA, assim como as estratégias utilizadas para gerar o sinal direcional do mercado. 
+    
+    \section{Agrupamento dos dados brutos}
+    
+        \paragraph{}Como fonte de dados para o trabalho, foi utilizada a base de dados brutos oferecida gratuitamente pela BM\&BOVESPA. Ao final de cada dia, um arquivo comprimido representando todas as negociações, ordens de compra e ordens de venda do dia anterior é disponibilizado, sendo o arquivo de negociação o de interesse para a geração dos indicadores de mercado. Informações sobre esse arquivo são mostradas conforme a Tabela \ref{tab:layout-neg}.
+        
+        \begin{table}[h]
+      \caption{Layout do arquivo de negociações disponibilizado pela BM\&FBOVESPA.}
+      \label{tab:layout-neg}
+      \centering
+      {\footnotesize
+      \begin{tabular}{|c|c|c|}
+        \hline
+        Coluna & Descrição\\
+        \hline
+        Data da Sessão & Data em que ocorreu a sessão\\
+        \hline
+        Símbolo do Instrumento & Ativo que foi negociado\\
+        \hline
+        Número de Negócio & Número sequencial do negócio\\
+        \hline
+        Preço do negócio & Preço negociado\\
+        \hline
+        Quantidade & Quantidade de ações negociada\\
+        \hline
+        Hora & Hora negociada com precisão de nanossegundos\\
+        \hline
+        Ind. Anulação & Indicador de Anulação: 1 - ativo / 2 - cancelado\\
+        \hline
+        Data Oferta Compra & Data da oferta de compra\\
+        \hline
+        Seq.Oferta Compra & Número sequencial da oferta de compra\\
+        \hline
+        GenerationID - Of.Compra & Número de geração (GenerationID) da Oferta de compra\\
+        \hline
+        Condição Oferta de Compra & 0 - Oferta Neutra; 1 - Oferta Agressora; 2 - Oferta Agredida\\
+        \hline
+        Data Oferta Venda & Data da oferta de venda\\
+        \hline
+        Seq.Oferta Venda & Número sequencial da oferta de venda\\
+        \hline
+        GenerationID - Of.Venda & Número de geração (GenerationID) da Oferta de venda\\
+        \hline
+        Condição Oferta de Venda & 0 - Oferta Neutra; 1 - Oferta Agressora; 2 - Oferta Agredida\\
+        \hline
+        Indicador de Direto & 1 - Intencional / 0 - Não Intencional\\
+        \hline
+        Corretora de Compra & Identificador da corretora de Compra\\
+        \hline
+        Corretora de Venda & Identificador da corretora de venda\\
+        
+        \hline
+      \end{tabular}}
+      \end{table}
+      
+      \paragraph{}Cada linha desse arquivo, portanto, representa um \textit{tick}, ou seja, o dado mais granular possível indicando uma operação de negociação, sem informações históricas associadas.
+      
+      \paragraph{}Seguindo a abordagem sugerida por \citet{everton-silva-master}, os \textit{ticks} foram agrupados em um intervalo determinado de minutos, chamado de janela de tempo. Dessa forma, o dado granular a ser consumido pelo futuro modelo agora possui informações mais densas e pode ser comparado com janelas anteriores para criar indicadores extensamente usados pelo mercado financeiro, oferecendo um maior poder de previsão. Com os preços de abertura e fechamento de um determinado ativo para cada janela, é possível recriar médias móveis e outros indicadores que necessitem de informações de fechamento passadas.
+      
+      \paragraph{}Com o intuito de realizar o agrupamento e pré-processamento dos dados brutos, foi desenvolvido um \textit{software} especificamente para o projeto. Para tal, foi escolhida a linguagem de programação C\#, compilada e orientada a objetos, rodando sobre o \textit{framework} multiplataforma .NET Core. Dessa forma, alcançou-se uma performance satisfatória na geração dos dados agrupados.
+      
+      \paragraph{}O \textit{software}, compatível com qualquer sistema operacional em uma máquina convencional, recebe o caminho de um diretório contendo todos os arquivos de negociação da BM\&FBOVESPA comprimidos. Ao ser executado, descomprime cada arquivo, filtra pelo ativo determinado no seu dicionário de parâmetros e agrupa os \textit{ticks} para formar janelas de tempo com minutos de intervalo também pré-determinados no dicionário. Tais janelas de tempo possuem, por sua vez, seus preços de abertura e fechamento, valores máximos e mínimos, total de negociações e quantidade total de papéis em cada negociação. Dessa maneira, é possível calcular seus indicadores para uma base diária de janelas de tempo, os quais são descritos na próxima seção.
+      
+      \section{Atributos do Conjunto de Dados de Entrada}
+      
+      \paragraph{}Nessa seção são discutido os atributos utilizados para montar o conjunto de dados de entrada do modelo. 
+      
+      \subsection{Indicadores de Análise Técnica}
+        
+          \paragraph{}Vários dos indicadores comumente usados para análise técnica no mercado financeiro foram reaproveitados e usados nas janelas de tempo resultantes do agrupamento dos dados. Utilizaram-se boa parte dos indicadores sugeridos em \citet{everton-silva-master} que empiricamente obtiveram a melhor correlação com a saída do modelo do trabalho corrente.
+          
+          \subsection{SMA (\textit{Simple Moving Average})}
+            \paragraph{}Médias móveis simples tem como objetivo identificar tendência de preço e um potencial de movimentação de acordo com uma tendência já estabelecida. O jeito mais simples de utilizar o identificador é observando se o preço atual encontra-se abaixo ou acima da curva de tendência \cite{sma-indicator}. Pode ser calculada pela fórmula abaixo:
+            
+            \begin{equation}
+                SMA = \frac{A_1 + A_2 + ... + A_N}{N} 
+            \end{equation}
+            
+        \subsection{EMA (\textit{Exponential Moving Average})}
+            \paragraph{}Assim como as médias móveis simples, médias móveis exponencias tem como objetivo identificar tendência nos preços, porém insere um peso maior aos preços mais recentes. Pode ser calculada pela seguinte fórmula:
+            
+            \begin{equation}
+                EMA_x = EMA_{x-1} + K \cdot CP_x - SMA_{x-1}
+            \end{equation}
+            
+            Onde:
+            \begin{equation}
+                K = \frac{2}{N + 1}
+            \end{equation}
+            
+            E: 
+            \begin{equation}
+                EMA_{0} = SMA_{0}
+            \end{equation}
+            
+            E CP equivale ao preço de fechamento do período, SMA é a média móvel simples e N é o número de períodos calculados. 
+            
+        \subsection{RSI (\textit{Relative Strenght Index})}
+            \paragraph{}O índice de força relativa é um oscilador de momento que tem como objetivo mensurar velocidade e mudança de movimento nos preços \cite{rsi-indicator}. Pode ser calculado pela seguinte fórmula:
+            
+            \begin{equation}
+                RSI = 100 - \frac{100}{1 + RS}
+            \end{equation}
+            \paragraph{}Onde:
+            \begin{equation}
+                RS = \frac{AG}{AL}
+            \end{equation}
+            
+            Sendo AG e AL a média dos ganhos e das perdas para os últimos N períodos de interesse, respectivamente.
+            
+          
+        \subsection{Bandas de Bollinger}
+            \paragraph{}As Bandas de Bollinger são indicadores úteis na medição da volatilidade dos preços, pois combinam a média móvel simples com o desvio padrão, gerando 2 curvas com a seguinte fórmula:
+            
+            \begin{equation}
+                UpperBand = SMA + 2 \cdot SD
+            \end{equation}
+            \paragraph{}E
+            \begin{equation}
+                LowerBand = SMA - 2 \cdot SD
+            \end{equation}
+            \paragraph{}Onde SD é o desvio padrão, dado pelo fórmula:
+            \begin{equation}
+                SD = \sqrt{\frac{\sum_{i=1}^{N} (x_i - M_A)^2}{N}}
+            \end{equation}
+            \paragraph{}E $M_A$ é a média móvel dos N períodos de interesse.
+            \paragraph{}O estreitamento das bandas indica que a volatilidade dos últimos períodos foi baixa, enquanto uma banda larga indica que houve maior volatilidade \cite{bollinger-indicator}.
+      
+      \section{Geração do sinal de saída}
+        
+        
 
 \chapter{Revisão Bibliográfica}
 
