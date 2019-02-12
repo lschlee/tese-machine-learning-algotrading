@@ -33,6 +33,7 @@
 \usepackage[brazil]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 \makelosymbols
 \makeloabbreviations
@@ -345,6 +346,97 @@
             \end{equation}
             \paragraph{}E $M_A$ é a média móvel dos N períodos de interesse.
             \paragraph{}O estreitamento das bandas indica que a volatilidade dos últimos períodos foi baixa, enquanto uma banda larga indica que houve maior volatilidade \cite{bollinger-indicator}.
+            
+        \subsection{MACD (\textit{Moving Average Convergence Divergence})}
+            \paragraph{}O indicador MACD é um indicador de momento e seguidor de tendências, caracterizando-se por relacionar 2 médias móveis de períodos diferentes. O MACD pode ser calculando subtraindo-se uma média móvel exponencial de longo prazo de uma média móvel exponencial de curto prazo, usualmente de 26 e 12 períodos \cite{macd-indicator}. Pode ser calculado segundo a fórmula:
+            
+            \begin{equation}
+                MACD = EMA[12] - EMA[26]
+            \end{equation}
+            
+        \subsection{\textit{Aroon Indicator}}
+            \paragraph{}O indicador \textit{Aroon} é usado para mensurar variações de tendência em um preço de um determinado ativo, assim como medir a força dessa tendência. Em síntese, esse indicador verifica o tempo de diferença para a última alta e para a última baixa sobre um número determinado de períodos. Esse indicador é composto por 2 curvas, uma medindo a tendência de alta e outra medindo a tendência de baixa. As curvas podem ser calculadas pela seguinte equação:
+            
+            \begin{equation}
+                Arron_{Up} = \frac{N - P_{MAX}}{N} \cdot 100
+            \end{equation}
+            
+            \begin{equation}
+                Arron_{Down} = \frac{N - P_{MIN}}{N} \cdot 100
+            \end{equation}
+            
+            \paragraph{}Combinando as 2 curvas:
+            
+            \begin{equation}
+                Aroon_{indicator} = Aroon_{Up} - Aroon_{Down}
+            \end{equation}
+            
+            \paragraph{}Sendo $P_{PAX}$ e $P_{MIN}$ o número de períodos desde a última máxima e última mínima no intervalo de N períodos especificado, respectivamente.
+            
+        \subsection{ADX Indicator}
+            \paragraph{}O indicador ADX trata-se de um indicador que mede a força de uma tendência e, quando combinado com indicadores direcionais, ditam também sua direção. É um dos indicadores mais complexos de serem calculados, pois sua fórmula por si só já define outros indicadores de dependência para o seu cálculo. Pode ser calculado pela seguinte fórmula:
+            
+            \begin{equation}
+                ADX = 100 \cdot EMA_{\delta}
+            \end{equation}
+            
+            \paragraph{}Onde $\delta$:
+            
+            \begin{equation}
+                \delta = \frac{|DI_{+} - DI_{-}|}{DI_{+} + DI_{-}}
+            \end{equation}
+            
+            \paragraph{}Sendo DI (\textit{Directional Indicators}):
+            \begin{equation}
+                DI_{+} = 100 \cdot \frac{ EMA_{DM_{+}}}{ATR}
+            \end{equation}
+            \begin{equation}
+                DI_{-} = 100 \cdot \frac{ EMA_{DM_{-}}}{ATR}
+            \end{equation}
+            
+            \paragraph{}Dado ATR (\textit{Average True Range}):
+            
+            \begin{equation}
+                ATR = \frac{1}{n} \sum_{i=1}^n TR_i
+            \end{equation}
+            
+            \paragraph{}Sendo TR (\textit{True Range}):
+            \begin{equation}
+                TR = \max[(Alta - Baixa), |Alta - Fechamento_{n-1}|, |Baixa - Fechamento_{n-1}|]
+            \end{equation}
+            
+            \paragraph{}Onde DM:
+             \begin{equation}
+                 DM_{+} = 
+                \begin{cases}
+                    Move_{Up},& \text{if } Move_{Up}\geq Move_{Down}\\
+                    0,              & \text{caso contrário}
+                \end{cases}
+             \end{equation}
+             \begin{equation}
+                 DM_{-} = 
+                \begin{cases}
+                    Move_{Down},& \text{if } Move_{Down}\geq Move_{Up}\\
+                    0,              & \text{caso contrário}
+                \end{cases}
+             \end{equation}
+             
+             \paragraph{}E, por fim:
+             
+             \begin{equation}
+                 Move_{Up} = Alta_{N} - Alta_{N-1}
+             \end{equation}
+             
+             \begin{equation}
+                 Move_{Down} = Baixa_{N} - Baixa_{N-1}
+             \end{equation}
+            
+                
+            
+            
+            
+            
+        
       
       \section{Geração do sinal de saída}
         
