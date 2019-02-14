@@ -137,7 +137,7 @@
   
   \section{Tema}
     
-    \paragraph{}O projeto consiste na aplicação de inteligência articificial às negociações de alta frequência no mercado financeiro (High Frequency Trading). Nesse contexto, o problema a ser resolvido é o levantamento de padrões de mercado que indiquem uma previsão futura, a curto prazo, de uma variação positiva no preço de um determinado ativo.
+    \paragraph{}O projeto consiste na aplicação de inteligência articificial às negociações de alta frequência no mercado financeiro (\textit{High Frequency Trading}). Nesse contexto, o problema a ser resolvido é o levantamento de padrões de mercado que indiquem uma previsão futura, a curto prazo, de uma variação positiva no preço de um determinado ativo.
     
   \section{Delimitação}
 
@@ -190,7 +190,7 @@
 
 \chapter{Fundamentos Teóricos}
   
-    \paragraph{}Neste capítulo, são introduzidos alguns conceitos base para o entendimento e desenvolvimento do projeto. A seguir, são feitas contextualizações sobre o Mercado de Capitais, Bolsa de Valores e como as HFT se inserem nesse conexto.
+    \paragraph{}Neste capítulo, são introduzidos alguns conceitos base para o entendimento e desenvolvimento do projeto. Nas próximas seções, são feitas contextualizações sobre o Mercado de Capitais, Bolsa de Valores e como as HFT se inserem nesse conexto.
     
     \section{Mercado de Capitais e Bolsa de Valores}
         \paragraph{}O Mercado Capitais é um sistema de distribuição de valores imobiliários que permite potencializar o fluxo financeiro entre vários agentes econômicos, aumentando a liquidez dos vários títulos existentes. Esse mercado, formado por corretoras, bancos, bolsa de valores e outras insituições financeiras, facilita o investimento em grandes empreendimentos e permite aos diferenes agentes econômicos a compra de parte da empresa por meio de ações, que são as menores frações do capital social de uma empresa. As ações, por sua vez, são uma forma veloz de atração de investimento para que a empresa consiga reinvestir no seu próprio crescimento \cite{barreto-mercado-capitais}.
@@ -293,7 +293,7 @@
           \subsection{SMA (\textit{Simple Moving Average})}
             \paragraph{}Médias móveis simples tem como objetivo identificar tendência de preço e um potencial de movimentação de acordo com uma tendência já estabelecida. O jeito mais simples de utilizar o identificador é observando se o preço atual encontra-se abaixo ou acima da curva de tendência \cite{sma-indicator}. Pode ser calculada pela fórmula abaixo:
             
-            \begin{equation}
+            \begin{equation} \label{eq:sma}
                 SMA = \frac{A_1 + A_2 + ... + A_N}{N} 
             \end{equation}
             
@@ -316,7 +316,7 @@
             
             E CP equivale ao preço de fechamento do período, SMA é a média móvel simples e N é o número de períodos calculados. 
             
-        \subsection{RSI (\textit{Relative Strenght Index})}
+        \subsection{RSI (\textit{Relative Strenght Index})} \label{sub:rsi}
             \paragraph{}O índice de força relativa é um oscilador de momento que tem como objetivo mensurar velocidade e mudança de movimento nos preços \cite{rsi-indicator}. Pode ser calculado pela seguinte fórmula:
             
             \begin{equation}
@@ -341,7 +341,7 @@
                 LowerBand = SMA - 2 \cdot SD
             \end{equation}
             \paragraph{}Onde SD é o desvio padrão, dado pelo fórmula:
-            \begin{equation}
+            \begin{equation} \label{eq:sd}
                 SD = \sqrt{\frac{\sum_{i=1}^{N} (x_i - M_A)^2}{N}}
             \end{equation}
             \paragraph{}E $M_A$ é a média móvel dos N períodos de interesse.
@@ -430,16 +430,73 @@
              \begin{equation}
                  Move_{Down} = Baixa_{N} - Baixa_{N-1}
              \end{equation}
+             
+        \subsection{CCI (\textit{Commodity Channel Index})}
+            \paragraph{}Esse indicador foi desenvolvido com o objetivo de apontar novas tendências e condições extremas, baseado em um comportamento cíclico dos preços. Em suma, o CCI mede a relação do preço atual de um determinado ativo com a média dos preços de um período especificado.
             
+            \paragraph{}Quando os preços encontram-se acima da média, o CCI é alto indicando que o ativo está sendo mais comprado do que deveria, ou seja, os preços tenderão a baixar nos próximos períodos. Quando o CCI é baixo, da mesma maneira, pode-se inferir que o ativo está sendo mais vendido do que deveria e, portanto, os preços subirão \cite{cci-indicator}. O indicador pode ser calculado da seguinte forma:
+            
+            \begin{equation}
+                CCI = \frac{TP - SMA(TP)}{0.015 \cdot SD(TP)} 
+            \end{equation}
+            
+            \paragraph{}Onde:
+            
+            \begin{equation}
+                 TP = \frac{P_A + P_B + P_F}{3}
+            \end{equation}
+               
                 
+            \paragraph{}Sendo $P_A$, $P_B$ e  $P_F$ os preços de alta, baixa e fechamento do intervalo avaliado, respectivamente. A média móvel simples (SMA) e o desvio padrão (SD) podem ser consultados pelas fórmulas \ref{eq:sma} e \ref{eq:sd} expostas anteriormente.
             
+        \subsection{CMO (\textit{Chande Momentum Oscilator})}
+        
+            \paragraph{}O indicador CMO também é um indicador de momento, ou seja, aponta se um determinado ativo está sendo mais comprado ou mais vendido do que realmente deveria, assim como o indicador RSI (\ref{sub:rsi}). O CMO não suaviza os resultados, disparando as mais frequentes penetrações de sobrecompra e sobrevenda \cite{cmo-indicator}. Pode ser calculado por:
             
+            \begin{equation}
+                CMO = 100 \cdot \frac{Up - Down}{Up + Down}
+            \end{equation}
+            
+            \paragraph{}Onde $Up$ refere-se ao preço de todos os intervalos de alta e $Down$ aos intervalos de baixa dentro do período especificado.
+            
+      \section{Variáveis do Contexto}
+        \paragraph{}Com o objetivo de avaliar o volume de negociações ocorridas dentro de um intervalo, foram criados mais 2 indicadores a partir dos dados brutos para futuro consumo do modelo, previamente descritos conforme a tabela \ref{tab:layout-neg}. As variáveis são mostradas abaixo:
+        
+        \subsection{Negociações por intervalo de tempo}
+            \paragraph{}Esse indicador tem como objetivo mensurar a velocidade de ações negociadas no intervalo de tempo especificado. Seu valor é puramente definido pelo número de negociações ocorridas num determinado intervalo.
+            
+        \subsection{Papéis negociados por intervalo de tempo}
+            \paragraph{}Através dessa variável é possível verificar o volume de papéis sendo negociados em um intervalo de tempo. Pode ser calculado pela seguinte forma:
+            
+            \begin{equation}
+                V_{k,k + n} = \sum_{t = k}^{k+n} Q_t
+            \end{equation}
+            
+            \paragraph{}Sendo $V$ o volume de papéis negociados no intervalo contido entre o tempo $k$ e $k + n$ e $Q$ a quantidade de papéis presentes em cada negociação do intervalo.
             
             
         
+      \section{Manipulações das variáveis do modelo}
+      
+        \paragraph{}Com o intuito de otimizar a assimilação das variáveis escolhidas pelo modelo, foram utilizadas algumas técnicas de normalização e dimensionamento.
+        
+        \paragraph{}De todas as variáveis que representam o valor de preço (SMA, EMA e Bandas de Bollinger), subtraiu-se o preço de fechamento do intervalo correspondente. Dessa maneira, foi possível  centralizar a variação dos preços para um futuro redimensionamento dos valores, guardando a precisão de cada movimento.
+        
+        \paragraph{}Dada a grande gama de valores das variáveis que representam o volume das negociações e papéis negociados, foi necessária a realização de uma transformação logarítmica para reduzir a escala dos dados. Para isso, utilizou-se o pacote científico \textbf{\textit{Numpy}} junto com a linguagem de programação \textbf{\textit{Python}}, extensivamente usada após o inicial agrupamento dos dados. A função \textbf{\textit{numpy.log}} foi a escolhida para tal transformação. 
+        
+        \paragraph{}Após a normalização inicial dos dados, padronizou-se a escala de todas as variáveis do modelo para o intervalo entre 0 e 1. Para aplicar esse dimensionamento, foi instanciada a classe \textbf{\textit{MinMaxScaler}}, oferecida pela biblioteca de pré-processamento do pacote \textbf{\textit{scikit-learn}} para realizar a transformação dos dados, seguindo a fórmula:
+        
+        \begin{equation}
+            x` = \frac{x - x_{min}}{x_{max} - x_{min}}
+        \end{equation}
+        
+        \paragraph{}A tabela xxxxx mostra o formato final dos dados de entrada do modelo. No capítulo seguinte será discutida a estratégia utilizada um sinal de compra, variável a ser prevista pelo modelo.
+        
+        
+    
       
       \section{Geração do sinal de saída}
-        
+        n esquece de falar q os indicadores tecnicos de preço foram subtraidos do preço de fechamento
         
 
 \chapter{Revisão Bibliográfica}
