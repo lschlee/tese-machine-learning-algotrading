@@ -507,17 +507,112 @@
             
             inserir imagem
       
-        \section{Estratégia de Compra e Venda}
+        \section{Estratégia de Compra e Venda}\label{sec:estrategia-saida}
             \paragraph{}De modo a facilitar a tomada de decisão e diminuir as premissas tomadas pelo agente autônomo, optou-se por uma estratégia que desconsidera a quantidade de ações possuídas. A função do robô reduz-se, portanto, a detectar movimentações de alta dos preços para que se possa obter lucro comprando e vendendo, necessariamente nessa ordem, sem guardar excedentes de ações ou papéis de uma janela de tempo para outra. 
             
             \paragraph{}Uma das possíveis estratégias para a geração de um indicador direcional de alta dos preços é assumir que se a diferença entre o máximo preço negociado na janela de previsão e o preço de fechamento da janela de tempo superar um limite $x$, o agente autônomo deve enviar uma ordem de compra no período $t$ e uma ordem de venda no período $t+t'$, assim como proposto em \citet{everton-silva-master}. O principal problema dessa abordagem é que, para um resultado positivo a longo prazo, o modelo precisa garantir uma precisão apurada para que os ganhos superem as possíveis perdas, classificadas como falsos positivos pelo modelo. Esses falsos positivos, ou seja, baixas de preço erroneamente classificadas como altas, podem gerar um prejuízo desproporcional se ordens de compra e venda forem enviadas a mercado no ínicio e no fim de cada janela de previsão para um cenário de queda abrupta dos preços.
             
-            \paragraph{}Com o objetivo de contornar os possíveis cenários de perda descritos acima, foi necessária a elaboração de uma estratégia que considerasse outros fatores na variação de preço dentro da janela de previsão. Dessa maneira, para gerar o indicador de compra, é verificado se a primeira variação positiva de $x$ entre preço negociado e preço de fechamento ocorreu antes da primeira variação negativa $y$. Se ocorrer essa situação, será feita a sinalização de compra para o modelo. No cenário de um falso positivo, nessa abordagem, estabelece-se que uma ordem de venda a mercado será enviada se a diferença entre o preço de fechamento e a última neogicação superar o valor $y$. Se, por acaso, o preço não ultrapassar o limite entre $x$ e $-y$, a ordem de venda a mercado será enviada ao final da janela de previsão.
+            \paragraph{}Com o objetivo de contornar os possíveis cenários de perda descritos acima, foi necessária a elaboração de uma estratégia que considerasse outros fatores na variação de preço dentro da janela de previsão. Dessa maneira, para gerar o indicador de compra, é verificado se a primeira variação positiva de $x$ entre preço negociado e preço de fechamento ocorreu antes da primeira variação negativa $y$. Se ocorrer essa situação, será feita a sinalização de compra para o modelo. No cenário de um falso positivo, nessa abordagem, estabelece-se que uma ordem de venda a mercado será enviada se a diferença entre o preço de fechamento e a última negociação superar o valor $y$. Se, por acaso, o preço não ultrapassar o limite entre $x$ e $-y$, a ordem de venda a mercado será enviada ao final da janela de previsão.
             
             \paragraph{}inserir imagem da variação de preço com limite superior x e inferior y
             
-      \section{Geração do sinal de saída}
-        n esquece de falar q os indicadores tecnicos de preço foram subtraidos do preço de fechamento
+        \section{Geração do sinal de saída}
+            \paragraph{}Dada a estratégia definida na seção anterior, conclui-se que trata-se de um problema de classificação: se o preço tiver variação positiva maior do que $x$, tem-se a saída do modelo com o valor 1, o que significa que ordens de compra e venda serão enviadas conforme definido na seção anterior. Se a variação de preço for positiva mas não ultrapassar o limite superior $x$ ou se a variação for negativa, tem-se a saída com o valor $1$.
+            
+            \paragraph{}Dessa forma, o problema reduz-se a um classificador binário, em que temos somente 2 classes possíveis para serem previstas.
+            
+    \chapter{Modelos de Previsão e Técnicas de Validação}
+    
+        \paragraph{}Nesse capítulo são definidos os modelos utilizados para o treinamento e previsão, assim como as técnicas de validação utilizadas para o levantamento de precisão e das oportunidades de compra corretamente aproveitadas pelo preditor.
+        
+        \section{Modelos Utilizados}
+        
+            \paragraph{}São definidos abaixo os modelos utilizados para treinamento e previsão do conjunto de dados.
+        
+            \subsection{MLP (\textit{Multi-layer Perceptron})}
+            
+                \paragraph{}Segundo a definição de \citet{scikit-learn}, essa técnica trata-se de um algoritmo de aprendizado profundo supervisionado que é capaz de aprender uma função $f(\cdot) : R^m \xrightarrow{}R^o$ pelo treinamento sobre um conjunto de dados, sendo $m$ o número de dimensões de entrada (variáveis do conjunto de treino) e $o$ o número de dimensões da saída. Dadas uma combinação de variáveis de entrada $X = x_1, x_2, ..., x_m$ e um alvo de saída $y$, o modelo é capaz de aprender uma função de aproximação não-linear tanto para regressão quanto para classificação, sendo esse último o problema a ser resolvido nesse projeto. Entre a camada de entrada e a camada de saída podem existir uma ou mais camadas não lineares, chamadas de camadas escondidas. Ilustra-se o MLP a partir da figura \ref{img:mlp-example}:
+                
+                \begin{figure}[h]\label{img:mlp-example}
+                    \caption{MLP com uma camada escondida entre a camada de entrada e a de saída}
+                    \includegraphics[width=7cm]{mlp-example.png}
+                    \centering
+                \end{figure}
+                
+                \paragraph{}Cada círculo na camada de entrada contém o que é chamado de neurônio $\{x_i|x_1,x_2,...,x_m\}$ e cada círculo da camada escondida representa um neurônio da camada escondida e transforma os valores da camada anterior baseado em uma soma com pesos $w_1x_1 + w_2x_2 + ... + w_mx_m$, seguido por uma função de ativação não linear $g(\cdot) : R \xrightarrow{} R$. A camada de saída recebe os valores da última camada escondida e transforma nos valores de saída \cite{mlp-model}.
+                
+            \subsection{Regressão Logística}
+            
+                \paragraph{}A regressão logística pode ser definida como uma técnica para calcular os parâmetros de um modelo logístico, ou seja, um modelo que se utiliza de funções logísticas para modelar o valor de uma variável binária dependente. Dessa maneira, essa técnica é vastamente utilizada para problemas de classificação cujas classes a serem previstas podem assumir 2 valores possíveis, como uma decisão de compra e não-compra de ações no mercado financeiro, escopo delimitado pelo projeto.
+                
+                \paragraph{}No modelo logístico, o logarítmo de acerto (referente à saídas classificadas como "1") é uma combinação linear de uma ou mais variáveis independentes binárias ou contínuas, que são as entradas do modelo. A probabilidade correspondente ao valor "1", pode variar continuamente entre 0 e 1 e a função que traduz essa probabilidade para a a classe final é chamada de função logística.
+                
+        \section{Técnicas de Validação}
+        
+            \paragraph{}Nessa seção são descritas as técnicas de validação usadas para o projeto.
+            
+            \subsection{Janelas Deslizantes}
+            
+                \paragraph{}Como o problema é de séries de tempo, a divisão do conjunto de dados entre treinamento e teste foi feita de modo que, obrigatoriamente, o conjunto de testes fosse composto por dados obtidos cronologicamente depois dos dados de treino. Dessa forma, foi possível obter previsões mais próximas do cenário real, em que a entrada do modelo obedece uma ordenação temporal.
+                
+                \paragraph{}Com o objetivo de obter o maior aproveitamento possível de dias utilizados para treino e previsão do conjunto de dados, foi utilizada a técnica de janelas deslizantes de treino e previsão. Nessa estratégia, utiliza-se um número $N$ de dias para formar o conjunto de treino e um número $N'$ para o conjunto de testes para realizar a validação. Na próxima iteração, utiliza-se o mesmo número de dias para as duas janelas, com a diferença que a janela de treino e de previsão tem início e fim do início e fim anteriores. A imagem \ref{img:sliding-validation} pode ser usada para ilustrar a explicação.
+                
+                
+                \begin{figure}[h]\label{img:sliding-validation}
+                    \caption{Janelas deslizantes com 4 dias usados para o conjunto de treino e 1 dia para o conjunto de teste}
+                    \includegraphics[width=8.3cm]{sliding-validation.PNG}
+                    \centering
+                \end{figure}
+                
+            \subsection{Expansão das Janelas Deslizantes}
+            
+                \paragraph{}Com o intuito de encontrar o número ótimo de dados de treino necessários para o modelo, foi feita uma iteração tal que, ao final do ciclo de janelas deslizantes de $N$ dias de treino, fosse iniciado um outro ciclo com $N+1$ dias para o conjunto de treino. Foi utilizada a linguagem de programação \textit{Python} para a implementação dessa lógica.
+                
+            \subsection{Parâmetros de validação}
+            
+                \paragraph{}Para cada previsão feita pelo modelo, cria-se uma matriz de confusão (\ref{img:matriz-confusao}) antes de extrair os parâmetros utilizados para mensurar a perfomance do modelo. 
+                
+                \begin{figure}[h]\label{img:matriz-confusao}
+                    \caption{Matriz de confusão}
+                    \includegraphics[width=10cm]{matrix-confusao.png}
+                    \centering
+                \end{figure}
+                
+                \paragraph{}Com a matriz de confusão, pode-se visualizar de forma mais direta os valores previstos em relação aos valores verdadeiros. Dessa forma, são de interesse para a performance do modelo o número de verdadeiros positivos e verdadeiros negativos em relação ao resto do conjunto.
+                
+                \paragraph{}Um verdadeiro positivo é quando uma classe classificada como "1" no conjunto de testes de fato possui o valor verdadeiro "1". Um falso positivo, por sua vez, refere-se a uma classe que é classificada como "1" enquanto possui "0" como valor verdadeiro. Pensamento análogo pode ser aplicado aos verdadeiros negativos e falsos negativos.
+                
+                \paragraph{}Para o domínio do trabalho, tem-se como interesse óbvio um modelo que seja capaz de obter mais acertos do que erros para obter lucro e, além disso, identifique o maior número possível de oportunidades de compra. A a matriz de confusão pode ser reaproveitada para gerar os parâmetros de validação abaixo.
+                
+                \subsubsection{Precisão}
+                    \paragraph{}A precisão é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de previsões verdadeiras do conjunto de teste. Pode ser calculada pela fórmula abaixo:
+                    
+                    \begin{equation}
+                        P = \frac{VP}{VP + FP}
+                    \end{equation}
+                    
+                    \paragraph{}Onde P é a precisão e VP e FP são classificadas como as amostras classificadas como verdadeiros positivos e falsos positivos, respectivamente.
+                    
+                \subsubsection{Revocação}
+                    \paragraph{}A revocação é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de verdadeiros do conjunto de teste. Pode ser calculada pela fórmula abaixo:
+                    
+                    \begin{equation}
+                        R = \frac{VP}{VP + FN} = \frac{VP}{TP}
+                    \end{equation}
+                    
+                    \paragraph{}Onde R é a revocação, FN é a quantidade de amostras classificadas como falso negativas e TP é o total de valores positivos do conjunto de teste.
+                    
+                \paragraph{}Para cada ciclo de uma determinada janela de treinamento, é calculada a média das precisões e das realocações obtidas de forma a obter a melhor combinação de dias de treino. Quanto mais alta a média das precisões, mais alta é a taxa de acerto obtida para futuras amostras. Se a realocação estiver alta, significa que o modelo está identificando grande parte das oportunidades de compra. Nesse ponto, é possível escolher a estratégia a ser seguida: manter um modelo mais seguro, que tenha menos sensibilidade para a hora de entrar no mercado, porém com maiores chances de acerto; manter um modelo que seja mais sensível para identificar oportunidades, porém menos preciso em sua previsão.
+                
+    \chapter{Resultados e Discussões}
+    
+        \paragraph{}Como estudo de caso para o projeto, foi escolhida a análise sobre a PETR4, ações preferências da Petrobrás, empresa voltou a ocupar em outubro de 2018 o título de mais valiosa do Brasil, chegando a bater a marca de R\$358 bilhões \cite{petr4-intro}. 
+        
+        \paragraph{}Para isso, foram importados todos os dados diários negociados da BM\&FBOVESPA de julho de 2018 até janeiro de 2019 e feito o pré-processamento descrito na seção \ref{sec:grouping}.
+        
+        \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de um minuto a partir do tempo de fim da janela de tempo.
+                
+                
         
 
 \chapter{Revisão Bibliográfica}
