@@ -217,11 +217,11 @@
         
     \section{Trabalhos Relacionados}
         
-\chapter{Pré-processamento, Base de Dados e Estratégias}    
+\chapter{Pré-processamento e Base de Dados do Modelo}    
 
     \paragraph{}Nesse capítulo são introduzidas as abordagens utilizadas para o pré-processamento e transformação dos dados brutos da BM\&FBOVESPA, assim como as estratégias utilizadas para gerar o sinal direcional do mercado. 
     
-    \section{Agrupamento dos dados brutos}
+    \section{Agrupamento dos dados brutos}\label{sec:grouping}
     
         \paragraph{}Como fonte de dados para o trabalho, foi utilizada a base de dados brutos oferecida gratuitamente pela BM\&BOVESPA. Ao final de cada dia, um arquivo comprimido representando todas as negociações, ordens de compra e ordens de venda do dia anterior é disponibilizado, sendo o arquivo de negociação o de interesse para a geração dos indicadores de mercado. Informações sobre esse arquivo são mostradas conforme a Tabela \ref{tab:layout-neg}.
         
@@ -490,11 +490,32 @@
             x` = \frac{x - x_{min}}{x_{max} - x_{min}}
         \end{equation}
         
-        \paragraph{}A tabela xxxxx mostra o formato final dos dados de entrada do modelo. No capítulo seguinte será discutida a estratégia utilizada um sinal de compra, variável a ser prevista pelo modelo.
+        \paragraph{}No capítulo seguinte será discutida a estratégia utilizada um sinal de compra, variável a ser prevista pelo modelo.
         
         
-    
+    \chapter{Estratégias e Geração da Variável Prevista} 
+        
+        \paragraph{}Nesse capítulo são introduzidas as abordagens e estratégias utilizadas para gerar a variável de previsão do modelo.
+        
+        \section{Janela de Previsão}
+        
+            \paragraph{}Com o objetivo de se obter lucro, o modelo deve ser capaz de prever movimentações de preço para que ordens de compra e venda possam ser enviadas no momento certo. Dada essa característica intrínseca do modelo, a variável de saída deve ser gerada a partir de um determinado intervalo futuro, de modo que exista alguma sequência de compras e vendas que resultem em uma diferença positiva de preço.
+            
+            \paragraph{}Considerando que as janelas de tempo em que os dados brutos foram agrupados possuem um intervalo de tempo $t$, o interesse está, portanto, no intervalo de tempo contido entre $t$ e $t + t'$, sendo $t'$ preferencialmente menor do que $t$ para que se obtenha um maior poder de previsão a curto prazo.
+            
+            \paragraph{}Percebe-se a janela de tempo e de previsão pela imagem abaixo:
+            
+            inserir imagem
       
+        \section{Estratégia de Compra e Venda}
+            \paragraph{}De modo a facilitar a tomada de decisão e diminuir as premissas tomadas pelo agente autônomo, optou-se por uma estratégia que desconsidera a quantidade de ações possuídas. A função do robô reduz-se, portanto, a detectar movimentações de alta dos preços para que se possa obter lucro comprando e vendendo, necessariamente nessa ordem, sem guardar excedentes de ações ou papéis de uma janela de tempo para outra. 
+            
+            \paragraph{}Uma das possíveis estratégias para a geração de um indicador direcional de alta dos preços é assumir que se a diferença entre o máximo preço negociado na janela de previsão e o preço de fechamento da janela de tempo superar um limite $x$, o agente autônomo deve enviar uma ordem de compra no período $t$ e uma ordem de venda no período $t+t'$, assim como proposto em \citet{everton-silva-master}. O principal problema dessa abordagem é que, para um resultado positivo a longo prazo, o modelo precisa garantir uma precisão apurada para que os ganhos superem as possíveis perdas, classificadas como falsos positivos pelo modelo. Esses falsos positivos, ou seja, baixas de preço erroneamente classificadas como altas, podem gerar um prejuízo desproporcional se ordens de compra e venda forem enviadas a mercado no ínicio e no fim de cada janela de previsão para um cenário de queda abrupta dos preços.
+            
+            \paragraph{}Com o objetivo de contornar os possíveis cenários de perda descritos acima, foi necessária a elaboração de uma estratégia que considerasse outros fatores na variação de preço dentro da janela de previsão. Dessa maneira, para gerar o indicador de compra, é verificado se a primeira variação positiva de $x$ entre preço negociado e preço de fechamento ocorreu antes da primeira variação negativa $y$. Se ocorrer essa situação, será feita a sinalização de compra para o modelo. No cenário de um falso positivo, nessa abordagem, estabelece-se que uma ordem de venda a mercado será enviada se a diferença entre o preço de fechamento e a última neogicação superar o valor $y$. Se, por acaso, o preço não ultrapassar o limite entre $x$ e $-y$, a ordem de venda a mercado será enviada ao final da janela de previsão.
+            
+            \paragraph{}inserir imagem da variação de preço com limite superior x e inferior y
+            
       \section{Geração do sinal de saída}
         n esquece de falar q os indicadores tecnicos de preço foram subtraidos do preço de fechamento
         
