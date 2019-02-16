@@ -606,11 +606,23 @@
                 
     \chapter{Resultados e Discussões}
     
-        \paragraph{}Como estudo de caso para o projeto, foi escolhida a análise sobre a PETR4, ações preferências da Petrobrás, empresa voltou a ocupar em outubro de 2018 o título de mais valiosa do Brasil, chegando a bater a marca de R\$358 bilhões \cite{petr4-intro}. 
+        \paragraph{}Como estudo de caso para o projeto, foi escolhida a análise sobre a PETR4, ações preferências da Petrobrás, empresa que voltou a ocupar em outubro de 2018 o título de mais valiosa do Brasil, chegando a bater a marca de R\$358 bilhões \cite{petr4-intro}. 
         
         \paragraph{}Para isso, foram importados todos os dados diários negociados da BM\&FBOVESPA de julho de 2018 até janeiro de 2019 e feito o pré-processamento descrito na seção \ref{sec:grouping}.
         
-        \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de um minuto a partir do tempo de fim da janela de tempo.
+        \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de 1 minuto a partir do tempo de fim da janela de tempo. 
+        
+        \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. A escolha desses limites está intrinsecamente ligada com a distribuição das classes binárias "0" e "1" do conjunto de dados e, para esses limites, foi possível obter uma distribuição de $55,63\%$ da classe "1". A distribuição próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}.
+        
+        \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representada o número de negociações dentro do intervalo especificado. 
+        
+        \begin{figure}[h]\label{img:heatmap}
+            \caption{Mapa de calor das variáveis}
+            \includegraphics[width=15cm]{corr.png}
+            \centering
+        \end{figure}
+        
+        
                 
                 
         
@@ -669,8 +681,8 @@
   \bibliographystyle{coppe-unsrt}
   \bibliography{example}
 
-  \appendix
-  \chapter{Algumas Demonstrações}
+  \appendix 
+  \chapter{Algumas Demonstrações}\label{cap:params}
 \end{document}
 %% 
 %%
