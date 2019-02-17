@@ -497,15 +497,21 @@
         
         \paragraph{}Nesse capítulo são introduzidas as abordagens e estratégias utilizadas para gerar a variável de previsão do modelo.
         
-        \section{Janela de Previsão}
+        \section{Janela de Decisão}
         
             \paragraph{}Com o objetivo de se obter lucro, o modelo deve ser capaz de prever movimentações de preço para que ordens de compra e venda possam ser enviadas no momento certo. Dada essa característica intrínseca do modelo, a variável de saída deve ser gerada a partir de um determinado intervalo futuro, de modo que exista alguma sequência de compras e vendas que resultem em uma diferença positiva de preço.
             
             \paragraph{}Considerando que as janelas de tempo em que os dados brutos foram agrupados possuem um intervalo de tempo $t$, o interesse está, portanto, no intervalo de tempo contido entre $t$ e $t + t'$, sendo $t'$ preferencialmente menor do que $t$ para que se obtenha um maior poder de previsão a curto prazo.
             
-            \paragraph{}Percebe-se a janela de tempo e de previsão pela imagem abaixo:
+            \paragraph{}A imagem \ref{img:dados-agrupados} ilustra o cenário descrito. Cada intervalo de tempo $t$ utiliza-se do intervalo verde $t'$ imediatamente posterior, que se inicia no mesmo momento da segunda janela usada para gerar o segundo intervalo.
             
-            inserir imagem
+            
+            \begin{figure}[h]
+                \caption{Janelas de Tempo e Decisão}
+                \label{img:dados-agrupados}
+                \includegraphics[width=15cm]{dados-agrupados.png}
+                \centering
+            \end{figure}
       
         \section{Estratégia de Compra e Venda}\label{sec:estrategia-saida}
             \paragraph{}De modo a facilitar a tomada de decisão e diminuir as premissas tomadas pelo agente autônomo, optou-se por uma estratégia que desconsidera a quantidade de ações possuídas. A função do robô reduz-se, portanto, a detectar movimentações de alta dos preços para que se possa obter lucro comprando e vendendo, necessariamente nessa ordem, sem guardar excedentes de ações ou papéis de uma janela de tempo para outra. 
@@ -514,7 +520,14 @@
             
             \paragraph{}Com o objetivo de contornar os possíveis cenários de perda descritos acima, foi necessária a elaboração de uma estratégia que considerasse outros fatores na variação de preço dentro da janela de previsão. Dessa maneira, para gerar o indicador de compra, é verificado se a primeira variação positiva de $x$ entre preço negociado e preço de fechamento ocorreu antes da primeira variação negativa $y$. Se ocorrer essa situação, será feita a sinalização de compra para o modelo. No cenário de um falso positivo, nessa abordagem, estabelece-se que uma ordem de venda a mercado será enviada se a diferença entre o preço de fechamento e a última negociação superar o valor $y$. Se, por acaso, o preço não ultrapassar o limite entre $x$ e $-y$, a ordem de venda a mercado será enviada ao final da janela de previsão.
             
-            \paragraph{}inserir imagem da variação de preço com limite superior x e inferior y
+            \begin{figure}[h]
+                \caption{Exemplo de situação de não-compra}
+                \label{img:estrategia-saida}
+                \includegraphics[width=13cm]{estrategia-saida1.png}
+                \centering
+            \end{figure}
+            
+            \paragraph{}Para ilustrar uma situação de não-compra, observa-se a imagem \ref{img:estrategia-saida}, que representa a variação dos preços ao longo do tempo. Mesmo o preço tendo ultrapassado o limite superior $p + x$ ao fim do intervalo $t'$, a saída indicando o sinal de compra não é gerada porque o limite inferior $p - y$ foi ultrapassado anteriormente.
             
         \section{Geração do sinal de saída}
             \paragraph{}Dada a estratégia definida na seção anterior, conclui-se que trata-se de um problema de classificação: se o preço tiver variação positiva maior do que $x$, tem-se a saída do modelo com o valor 1, o que significa que ordens de compra e venda serão enviadas conforme definido na seção anterior. Se a variação de preço for positiva mas não ultrapassar o limite superior $x$ ou se a variação for negativa, tem-se a saída com o valor $1$.
@@ -525,7 +538,7 @@
     
         \paragraph{}Nesse capítulo são definidos os modelos utilizados para o treinamento e previsão, assim como as técnicas de validação utilizadas para o levantamento de precisão e das oportunidades de compra corretamente aproveitadas pelo preditor.
         
-        \section{Modelos Utilizados}
+        \section{Modelos Utilizados}\label{sec:models}
         
             \paragraph{}São definidos abaixo os modelos utilizados para treinamento e previsão do conjunto de dados.
         
@@ -533,8 +546,9 @@
             
                 \paragraph{}Segundo a definição de \citet{scikit-learn}, essa técnica trata-se de um algoritmo de aprendizado profundo supervisionado que é capaz de aprender uma função $f(\cdot) : R^m \xrightarrow{}R^o$ pelo treinamento sobre um conjunto de dados, sendo $m$ o número de dimensões de entrada (variáveis do conjunto de treino) e $o$ o número de dimensões da saída. Dadas uma combinação de variáveis de entrada $X = x_1, x_2, ..., x_m$ e um alvo de saída $y$, o modelo é capaz de aprender uma função de aproximação não-linear tanto para regressão quanto para classificação, sendo esse último o problema a ser resolvido nesse projeto. Entre a camada de entrada e a camada de saída podem existir uma ou mais camadas não lineares, chamadas de camadas escondidas. Ilustra-se o MLP a partir da figura \ref{img:mlp-example}:
                 
-                \begin{figure}[h]\label{img:mlp-example}
+                \begin{figure}[h]
                     \caption{MLP com uma camada escondida entre a camada de entrada e a de saída}
+                    \label{img:mlp-example}
                     \includegraphics[width=7cm]{mlp-example.png}
                     \centering
                 \end{figure}
@@ -543,11 +557,20 @@
                 
             \subsection{Regressão Logística}
             
-                \paragraph{}A regressão logística pode ser definida como uma técnica para calcular os parâmetros de um modelo logístico, ou seja, um modelo que se utiliza de funções logísticas para modelar o valor de uma variável binária dependente. Dessa maneira, essa técnica é vastamente utilizada para problemas de classificação cujas classes a serem previstas podem assumir 2 valores possíveis, como uma decisão de compra e não-compra de ações no mercado financeiro, escopo delimitado pelo projeto.
+                \paragraph{}A regressão logística pode ser definida como uma técnica para calcular os parâmetros de um modelo logístico, ou seja, um modelo que se utiliza de funções logísticas para modelar o valor de uma variável binária dependente. Dessa maneira, essa técnica é vastamente utilizada para problemas de classificação cujas classes a serem previstas podem assumir 2 valores possíveis, como uma decisão de compra e não-compra de ações no mercado financeiro, escopo delimitado pelo projeto. A imagem \ref{img:logreg-example} ilustra os passos para a previsão da saída pelo algorítmo.
+                
+                \begin{figure}[h]
+                    \caption{Regressão logística}
+                    \label{img:logreg-example}
+                    \includegraphics[width=10cm]{logreg-example.png}
+                    \centering
+                \end{figure}
+                
+                \paragraph{}Assim como no MLP (\ref{img:mlp-example}), a Regressão Logística aplica pesos às variáveis de entrada para encontrar uma soma calculada das mesmas. Em seguida, ao invés de passar por camadas escondidas, essa soma passa por uma função de atachamento que retorna uma probabilidade associada. Essa probabilidade, por fim, passa por uma função degrau que classifica a saída baseado em um limiar \cite{logreg-model}.
                 
                 \paragraph{}No modelo logístico, o logarítmo de acerto (referente à saídas classificadas como "1") é uma combinação linear de uma ou mais variáveis independentes binárias ou contínuas, que são as entradas do modelo. A probabilidade correspondente ao valor "1", pode variar continuamente entre 0 e 1 e a função que traduz essa probabilidade para a a classe final é chamada de função logística.
                 
-        \section{Técnicas de Validação}
+        \section{Técnicas de Validação}\label{sec:validation}
         
             \paragraph{}Nessa seção são descritas as técnicas de validação usadas para o projeto.
             
@@ -558,8 +581,9 @@
                 \paragraph{}Com o objetivo de obter o maior aproveitamento possível de dias utilizados para treino e previsão do conjunto de dados, foi utilizada a técnica de janelas deslizantes de treino e previsão. Nessa estratégia, utiliza-se um número $N$ de dias para formar o conjunto de treino e um número $N'$ para o conjunto de testes para realizar a validação. Na próxima iteração, utiliza-se o mesmo número de dias para as duas janelas, com a diferença que a janela de treino e de previsão tem início e fim do início e fim anteriores. A imagem \ref{img:sliding-validation} pode ser usada para ilustrar a explicação.
                 
                 
-                \begin{figure}[h]\label{img:sliding-validation}
+                \begin{figure}[h]
                     \caption{Janelas deslizantes com 4 dias usados para o conjunto de treino e 1 dia para o conjunto de teste}
+                    \label{img:sliding-validation}
                     \includegraphics[width=8.3cm]{sliding-validation.PNG}
                     \centering
                 \end{figure}
@@ -572,8 +596,9 @@
             
                 \paragraph{}Para cada previsão feita pelo modelo, cria-se uma matriz de confusão (\ref{img:matriz-confusao}) antes de extrair os parâmetros utilizados para mensurar a perfomance do modelo. 
                 
-                \begin{figure}[h]\label{img:matriz-confusao}
+                \begin{figure}[h]
                     \caption{Matriz de confusão}
+                    \label{img:matriz-confusao}
                     \includegraphics[width=10cm]{matrix-confusao.png}
                     \centering
                 \end{figure}
@@ -602,7 +627,7 @@
                     
                     \paragraph{}Onde R é a revocação, FN é a quantidade de amostras classificadas como falso negativas e TP é o total de valores positivos do conjunto de teste.
                     
-                \paragraph{}Para cada ciclo de uma determinada janela de treinamento, é calculada a média das precisões e das realocações obtidas de forma a obter a melhor combinação de dias de treino. Quanto mais alta a média das precisões, mais alta é a taxa de acerto obtida para futuras amostras. Se a realocação estiver alta, significa que o modelo está identificando grande parte das oportunidades de compra. Nesse ponto, é possível escolher a estratégia a ser seguida: manter um modelo mais seguro, que tenha menos sensibilidade para a hora de entrar no mercado, porém com maiores chances de acerto; manter um modelo que seja mais sensível para identificar oportunidades, porém menos preciso em sua previsão.
+                \paragraph{}Para cada ciclo de uma determinada janela de treinamento, é calculada a média das precisões e das realocações obtidas de forma a obter a melhor combinação de dias de treino. Quanto mais alta a média das precisões, mais alta é a taxa de acerto obtida para futuras amostras. Se a realocação estiver alta, significa que o modelo está identificando grande parte das oportunidades de compra. Nesse ponto, é possível escolher a estratégia a ser seguida: manter um modelo mais seguro, que tenha menos sensibilidade para a hora de entrar no mercado, porém com maiores chances de acerto; manter um modelo mais agressivo, que seja mais sensível para identificar oportunidades, porém menos preciso em sua previsão.
                 
     \chapter{Resultados e Discussões}
     
@@ -612,15 +637,40 @@
         
         \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de 1 minuto a partir do tempo de fim da janela de tempo. 
         
-        \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. A escolha desses limites está intrinsecamente ligada com a distribuição das classes binárias "0" e "1" do conjunto de dados e, para esses limites, foi possível obter uma distribuição de $55,63\%$ da classe "1". A distribuição próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}.
+        \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. A escolha desses limites está intrinsecamente ligada com a distribuição das classes binárias "0" e "1" do conjunto de dados e, para esses limites, foi possível obter uma distribuição de $55,63\%$ da classe "1". A distribuição das classes próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}. Especificados os parâmetros de pré-processamento, o software C\# inicia o agrupamento dos dados para cada dia coletado na BM\&FBOVESPA.
         
         \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representada o número de negociações dentro do intervalo especificado. 
         
-        \begin{figure}[h]\label{img:heatmap}
-            \caption{Mapa de calor das variáveis}
+        \begin{figure}[h]
+            \caption{Mapa de Calor das Correlações entre as Variáveis}
+            \label{img:heatmap}
             \includegraphics[width=15cm]{corr.png}
             \centering
         \end{figure}
+        
+        São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, pode-se acompanhar a evolução das medidas até o máximo de cada métrica.
+        
+        \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $90,56\%$ com 88 dias de treino e a máxima precisão foi de aproximadamente $63,07\%$, alcançada com 78 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $90,22\%$ com 80 dias, enquanto que sua maior precisão foi de $63,28\%$ com 98 dias de treino.
+        
+        \begin{figure}[h!]
+            \caption{Performance da Regressão Logística}
+            \label{img:performance-logreg}
+            \includegraphics[width=12cm]{performance-logreg.png}
+            \centering
+        \end{figure}
+        
+        \begin{figure}[h!]
+            \caption{Performance do \textit{Multi-layer Perceptron}}
+            \label{img:performance-mlp}
+            \includegraphics[width=12cm]{mlp-performance.png}
+            \centering
+        \end{figure}
+        
+        \paragraph{}Apesar da maior precisão encontrada pelos modelos ter sido obtida com o \textit{Multi-Layer Perceptron}, o modelo necessitou de um conjunto de dados dos últimos 98 dias, 20 dias a mais do que o algoritmo de Regressão Logística necessitou para encontrar seu máximo de precisão. Para a realocação, o MLP necessitou de 8 dias a menos de treino para alcançar seu máximo de $90,22\%$, porém o maior valor, de $90,46\%$, foi alcançado pela Regressão Logística com 88 dias de treino.
+        
+        \paragraph{}Ao observar a evolução das precisões e realocações, pode-se perceber um ruído muito maior no MLP. A curva traçada para ambas as medidas pela regressão é muito mais suave, fator que indica maior estabilidade e, portanto, confiabilidade e poder preditivo do algoritmo.
+        
+        
         
         
                 
