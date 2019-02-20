@@ -39,12 +39,11 @@
 \makeloabbreviations
 
 \begin{document}
-  \title{Título da Tese}
-  \foreigntitle{Thesis Title}
+  \title{Técnicas de Aprendizado de Máquina aplicadas a AlgoTrading no Mercado de Ações}
+  \foreigntitle{Machine Learning Techniques applied to AlgoTrading in the Stock Market}
   \author{Lucas}{Schlee de Brito Fernandes}
-  \advisor{Prof.}{Nome do Primeiro Orientador}{Sobrenome}{D.Sc.}
-  \advisor{Prof.}{Nome do Segundo Orientador}{Sobrenome}{Ph.D.}
-  \advisor{Prof.}{Nome do Terceiro Orientador}{Sobrenome}{D.Sc.}
+  \advisor{Prof.}{Heraldo}{Luís Silveira de Almeida}{D.Sc.}
+  \advisor{Prof.}{Flávio}{Luis de Mello}{Ph.D.}
 
   \examiner{Prof.}{Nome do Primeiro Examinador Sobrenome}{D.Sc.}
   \examiner{Prof.}{Nome do Segundo Examinador Sobrenome}{Ph.D.}
@@ -207,7 +206,7 @@
         
         \paragraph{}Algoritmos de negociação vem sido cada vez mais utilizados nas últimas décadas. Segundo \citet{chaboud-hft}, algoritmos de negociação classificam-se como uma interface direta entre computadores e plataformas de negociação, sendo capaz de posicionar ordens de compra e venda sem quaisquer intervenção humana.
         
-        \paragraph{}O termo HFT, por sua vez, é mais recente e trata-se de um subgrupo dos algoritmos de negociação mencionados anteriormente. Esse grupo de algoritmos tem como característica a execução de operações de negociação a níveis de milissegundo.
+        \paragraph{}O termo HFT, por sua vez, é mais recente e trata-se de um subgrupo dos algoritmos de negociação mencionados anteriormente. Esse grupo de algoritmos tem como característica a execução de operações de negociação a nível de milissegundo.
         
         \paragraph{}O grupo de algoritmos de negociação e, portanto, as HFT, podem ser vistas como ferramentas para os \textit{traders} ou especuladores que observam parâmetros de mercado em tempo real para produzirem decisões de negociação. 
         
@@ -216,6 +215,22 @@
         \paragraph{}Grande parte desses algoritmos se utiliza de indicadores de análise técnica ou puramente derivadas da curva recente do preço para realizar suas operações, aliados a um conjunto de regras e estratégias pré-estabelecidas. Dessa maneira, torna-se interessante a aplicação de aprendizado de máquina na previsão de preços ou direcionamentos futuros para que a tomada de decisão torne-se mais segura e eficiente a longo prazo.
         
     \section{Trabalhos Relacionados}
+    
+        \paragraph{}A aplicação de aprendizado de máquina ao mercado financeiro não é recente. Desde 1988, época em que não se podia contar com um poder de processamento elevado para executar previsões, já tinha sido levantada a hipótese de um modelo que considerasse inteligência artificial na determinação dos preços futuros. O estudo foi conduzido por \citet{halbert-white} e tinha como objetivo analisar o retorno diário das ações comuns da IBM ao longo de 4 anos com apoio de algoritmos utilizando redes neurais. Desde então, apoiados pelo avanço na tecnologia e pelas ferramentas de negociações cada vez mais modernas, os investimentos e estudos nesse tema foram aumentando.
+        
+        \paragraph{}Em 2012, com o assunto mais amadurecido, começaram a surgir trabalhos como o de \citet{adebiyi-ayodele}. Em seus estudos, utilizou dados públicos disponíveis na Internet para modelar uma estratégia de previsão de preços futuros para alguns ativos do mercado. Baseado em intervalos diários, combinou indicadores de análise técnica e variáveis criadas para formar um modelo híbrido que aplicava redes neurais para a previsão do preço futuro.
+        
+        \paragraph{}Ainda em uma base diária de previsão, destaca-se o trabalho de \citet{xiaodong-li}. Ao estruturar sua estratégia, utilizou uma mistura entre notícias de jornais de investimento e modelos de previsão baseadas do livro de ordens com a aplicação de algoritmos de \textit{Support Vector Machines (SVMs)} para gerar um sinal de negociação.
+        
+        \paragraph{}Além dos estudos mencionados acima, outros destacam-se no tema de aprendizado de máquina aplicado a estatégias de longo prazo para uma base diária. Apesar disso, poucos estudos se aventuraram na aplicação de inteligência artificial às negociações de alta frequência, também chamadas de HFT (\textit{High Frequency Trading}) na literatura.
+        
+        \paragraph{}No escopo do curto prazo, estudos como o de \citet{dixon-hft} começaram a surgir. Em sua abordagem, ele defende que a volatilidade e liquidez do preço estão intrinsicamente ligadas às ordens de compra e venda de um determinado ativo. Dessa maneira, utiliza-se da profundidade do livro de ofertas para prever a direção dos preços e calcula uma possível alta ou baixa de acordo com o número de compradores ou vendedores interessados, representados pela quantidade e volume das ordens de compra e venda.
+        
+        \paragraph{}Em um aproveitamento maior dos indicadores de análise técnica extensivamente usados pelo mercado financeiro, \citet{putra-hft} consegue aplicá-los no contexto de HFT ao agrupar os dados da bolsa de valores da Indonesia em janelas de tempo de 15 minutos. Em seu modelo, cada janela carrega consigo preços de abertura e fechamento, além de médias móveis e indicadores de momento e tendência. Sua estratégia está ligada ao retorno futuro obtido, primeiramente sobre a diferença entre preço de abertura e fechamento e posteriormente sobre a diferença entre máximo e mínimo de um intervalo específico, o qual tenta prever com a aplicação de redes neurais artificiais.
+        
+        \paragraph{}No Brasil, estudo semelhante foi aplicado por \citet{everton-silva-master} em sua tese de mestrado. Utilizando-se também de indicadores de analise técnica aplicados a janelas de tempo, teve como estratégia a geração de um sinal binário indicando se no intervalo seguinte uma determinada ação apresentará uma alta ou baixa dos preços. Seu sinal de direção positiva dos preços é disparado se o máximo preço do intervalo seguinte superar o preço fechamento do intervalo corrente em um determinado limiar. Utiliza-se do modelo \textit{Multi-Layer Perceptron} para o treinamento do modelo e da validação em janelas deslizantes de dias para simular previsões em alguns ativos da BM\&FBOVESPA.
+        
+        \paragraph{}O presente trabalho, apesar de utilizar os conceitos de agrupamento de \textit{ticks} em janelas de tempo e validação por janelas deslizantes de dias, diferencia-se por definir um intervalo menor de tempo (3 minutos) para seu agrupamento para identificar mais oportunidades, pela geração de variáveis referentes à volatilidade do mercado e pela elaboração de uma estratégia focada na prevenção de possíveis prejuízos. No decorrer dos capítulos, são apresentadas com mais detalhe as diferenças de estratégia que apresentam maior proteção no cenário de negociações de alta frequência, assim como o raciocínio de como os falsos positivos das estratégias anteriores podem causar perdas maiores do que os possíveis ganhos.
         
 \chapter{Pré-processamento e Base de Dados do Modelo}    
 
@@ -529,6 +544,8 @@
             
             \paragraph{}Para ilustrar uma situação de não-compra, observa-se a imagem \ref{img:estrategia-saida}, que representa a variação dos preços ao longo do tempo. Mesmo o preço tendo ultrapassado o limite superior $p + x$ ao fim do intervalo $t'$, a saída indicando o sinal de compra não é gerada porque o limite inferior $p - y$ foi ultrapassado anteriormente.
             
+            \paragraph{}Destaca-se, nessa abordagem, que o maior prejuízo que pode ser obtido por um falso positivo é de y. É válido mencionar também que nem todo falso positivo, nessa perspectiva, causará prejuízo. Na situação em que o preço de fechamento supera o valor de abertura em $z$, sendo $z < x$, é possível obter lucro sem que o sinal direcionador de compra seja disparado.
+            
         \section{Geração do sinal de saída}
             \paragraph{}Dada a estratégia definida na seção anterior, conclui-se que trata-se de um problema de classificação: se o preço tiver variação positiva maior do que $x$, tem-se a saída do modelo com o valor 1, o que significa que ordens de compra e venda serão enviadas conforme definido na seção anterior. Se a variação de preço for positiva mas não ultrapassar o limite superior $x$ ou se a variação for negativa, tem-se a saída com o valor $1$.
             
@@ -668,7 +685,7 @@
         
         \paragraph{}Apesar da maior precisão encontrada pelos modelos ter sido obtida com o \textit{Multi-Layer Perceptron}, o modelo necessitou de um conjunto de dados dos últimos 98 dias, 20 dias a mais do que o algoritmo de Regressão Logística necessitou para encontrar seu máximo de precisão. Para a realocação, o MLP necessitou de 8 dias a menos de treino para alcançar seu máximo de $90,22\%$, porém o maior valor, de $90,46\%$, foi alcançado pela Regressão Logística com 88 dias de treino.
         
-        \paragraph{}Ao observar a evolução das precisões e realocações, pode-se perceber um ruído muito maior no MLP. A curva traçada para ambas as medidas pela regressão é muito mais suave, fator que indica maior estabilidade e, portanto, confiabilidade e poder preditivo do algoritmo.
+        \paragraph{}Ao observar a evolução das precisões e realocações, pode-se perceber um ruído muito maior no MLP. A curva traçada para ambas as medidas pela regressão é consideravelmente mais suave, fator que indica maior estabilidade e, portanto, confiabilidade e poder preditivo do algoritmo.
         
         
         
