@@ -34,6 +34,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{minted}
 
 \makelosymbols
 \makeloabbreviations
@@ -94,11 +95,11 @@
   
   
   
-  \date{01}{2016}
+  \date{02}{2019}
 
-  \keyword{Primeira palavra-chave}
-  \keyword{Segunda palavra-chave}
-  \keyword{Terceira palavra-chave}
+  \keyword{Aprendizado de Máquina}
+  \keyword{Mercado Financeiro}
+  \keyword{Algotrading}
 
   \maketitle
 
@@ -114,13 +115,13 @@
 
   \begin{abstract}
 
-  Apresenta-se, nesta tese, ...
+  A cada dia no mercado de ações é possível identificar milhares de decisões tomadas automaticamente, sem a necessidade de intervenção humana. Apesar disso, essa tendência, considerada irreversível, ainda utiliza estratégias baseadas em regras bem definidas. Nesse contexto, o presente trabalho propõe a aplicação de técnicas de aprendizado de máquina para identificar padrões e prever a direção dos preços das ações para negociações de alta frequência.
 
   \end{abstract}
 
   \begin{foreignabstract}
 
-  In this work, we present ...
+  Each day in the stock market it`s possible to identify thousands of decisions made automatically, without the need for human intervention. Despite this, this trend, considered irreversible, still uses strategies based on well-defined rules. In this context, the present work proposes the application of machine learning techniques to identify patterns and predict the direction of stock prices for high frequency trades.
 
   \end{foreignabstract}
 
@@ -176,15 +177,17 @@
   
   \section{Descrição}
   
-    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre o mercado de capitais e bolsa de valores, assim como são negociados seus ativos. Nele, também será feita uma contextualização das negociações de alta frequência e o que são algoritmos HFT.
+    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre o mercado de capitais e bolsa de valores, assim como são negociados seus ativos. Nele, também será feita uma contextualização das negociações de alta frequência e o que são algoritmos HFT, assim como os trabalhos presentes na literatura sobre HFT e aprendizado de máquina.
     
     \paragraph{}O capítulo 3 introduz as informações provenientes dos dados brutos da BM\&FBOVESPA, assim como as técnicas utilizadas para pré-processá-los. Nele, também serão discutidos os diversos indicadores de análise técnicas aproveitados como \textit{features} no modelo e como foi realizada a normalização desses indicadores.
     
-    \paragraph{}No capítulo 4, são discutidos os modelos utilizados para a previsão dos dados de teste e as técnicas de validação utilizadas.
+    \paragraph{}O capítulo 4 descreve a estratégia utilizada para a geração da variável de saída do modelo e os diferentes cenários em que um sinal de direção dos preços pode ser ou não disparado.
     
-    \paragraph{}O capítulo 5 mostra os resultados e discussões obtidos para um determinado ativo do mercado brasileiro.
+    \paragraph{}No capítulo 5, são discutidos os modelos utilizados para a previsão dos dados de teste e as técnicas de validação utilizadas.
     
-    \paragraph{}Por fim, no capítulo 6 são levantadas as conclusões do projeto, indicando as limitações encontradas e sugestões para evoluções do trabalho realizado.
+    \paragraph{}O capítulo 6 mostra os resultados e discussões obtidos para um determinado ativo do mercado brasileiro.
+    
+    \paragraph{}Por fim, no capítulo 7 são levantadas as conclusões do projeto, indicando as limitações encontradas e sugestões para evoluções do trabalho realizado.
   
 
 \chapter{Fundamentos Teóricos}
@@ -626,15 +629,6 @@
                 
                 \paragraph{}Para o domínio do trabalho, tem-se como interesse óbvio um modelo que seja capaz de obter mais acertos do que erros para obter lucro e, além disso, identifique o maior número possível de oportunidades de compra. A a matriz de confusão pode ser reaproveitada para gerar os parâmetros de validação abaixo.
                 
-                \subsubsection{Precisão}
-                    \paragraph{}A precisão é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de previsões verdadeiras do conjunto de teste. Pode ser calculada pela fórmula abaixo:
-                    
-                    \begin{equation}
-                        P = \frac{VP}{VP + FP}
-                    \end{equation}
-                    
-                    \paragraph{}Onde P é a precisão e VP e FP são classificadas como as amostras classificadas como verdadeiros positivos e falsos positivos, respectivamente.
-                    
                 \subsubsection{Revocação}
                     \paragraph{}A revocação é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de verdadeiros do conjunto de teste. Pode ser calculada pela fórmula abaixo:
                     
@@ -644,7 +638,46 @@
                     
                     \paragraph{}Onde R é a revocação, FN é a quantidade de amostras classificadas como falso negativas e TP é o total de valores positivos do conjunto de teste.
                     
+                \subsubsection{Precisão}
+                    \paragraph{}A precisão é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de previsões verdadeiras do conjunto de teste. Pode ser calculada pela fórmula abaixo:
+                    
+                    \begin{equation}
+                        P = \frac{VP}{VP + FP}
+                    \end{equation}
+                    
+                    \paragraph{}Onde P é a precisão e VP e FP são classificadas como as amostras classificadas como verdadeiros positivos e falsos positivos, respectivamente.
+                    
                 \paragraph{}Para cada ciclo de uma determinada janela de treinamento, é calculada a média das precisões e das realocações obtidas de forma a obter a melhor combinação de dias de treino. Quanto mais alta a média das precisões, mais alta é a taxa de acerto obtida para futuras amostras. Se a realocação estiver alta, significa que o modelo está identificando grande parte das oportunidades de compra. Nesse ponto, é possível escolher a estratégia a ser seguida: manter um modelo mais seguro, que tenha menos sensibilidade para a hora de entrar no mercado, porém com maiores chances de acerto; manter um modelo mais agressivo, que seja mais sensível para identificar oportunidades, porém menos preciso em sua previsão.
+                
+                \paragraph{}Estendendo a análise da precisão aplicada na estratégia definida na seção \ref{sec:estrategia-saida}, é possível identificar imediatamente um mínimo de precisão segura, baseado nos limites superior $x$ e inferior $y$, que o modelo deve alcançar para o cenário de prejuízos máximos. Um cenário de prejuízo máximo, como discutido no capítulo anterior, se caracteriza quando todas as previsões classificadas como falso positivas alcançam o limite inferior $y$, causando um prejuízo de $N \cdot Y$, sendo $N$ o número de papéis negociados. 
+                
+                \paragraph{}Supondo que, para obter lucro, o volume de verdadeiros positivos vezes o lucro precisa ser maior do que o volume de falsos positivos vezes a perda, tem-se a seguinte relação:
+                
+                \begin{equation}
+                    V \cdot P \cdot x \geq V \cdot (1 - P) \cdot y
+                \end{equation}
+                
+                \paragraph{}Onde $V$ é o volume de papéis negociados, $P$ é a precisão de acerto e $x$ e $y$ referem-se aos limites superiores e inferior, respectivamente. Estabelecendo que a relação de $x$ e $y$ ocorre por $K = \frac{x}{y}$, a equação pode ser reduzida a:
+                
+                \begin{equation}
+                    K > \frac{1}{P} - 1
+                \end{equation}
+                
+                \paragraph{}E:
+                
+                \begin{equation}
+                    K + 1 > \frac{1}{P}                    
+                \end{equation}
+                
+                \paragraph{}Então:
+                
+                \begin{equation}\label{eq:precisao-minima}
+                    P > \frac{1}{K + 1}
+                \end{equation}
+                
+                \paragraph{}Em suma, a partir da relação acima, pode ser definida uma precisão mínima que nunca causa prejuízos nos falsos positivos a partir dos limites $x$ e $y$. Destaca-se o cenário de que, mesmo obtendo uma precisão menor do que a mínima segura, ainda é possível obter lucro pelo modelo se houver uma parcela de falsos positivos que não ultrapassagem a margem inferior $y$.
+                
+                
                 
     \chapter{Resultados e Discussões}
     
@@ -656,7 +689,7 @@
         
         \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. A escolha desses limites está intrinsecamente ligada com a distribuição das classes binárias "0" e "1" do conjunto de dados e, para esses limites, foi possível obter uma distribuição de $55,63\%$ da classe "1". A distribuição das classes próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}. Especificados os parâmetros de pré-processamento, o software C\# inicia o agrupamento dos dados para cada dia coletado na BM\&FBOVESPA.
         
-        \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representada o número de negociações dentro do intervalo especificado. 
+        \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representa o número de negociações dentro do intervalo especificado. 
         
         \begin{figure}[h]
             \caption{Mapa de Calor das Correlações entre as Variáveis}
@@ -665,7 +698,7 @@
             \centering
         \end{figure}
         
-        São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, pode-se acompanhar a evolução das medidas até o máximo de cada métrica.
+        São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, é possível acompanhar a evolução das medidas até o máximo de cada métrica.
         
         \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $90,56\%$ com 88 dias de treino e a máxima precisão foi de aproximadamente $63,07\%$, alcançada com 78 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $90,22\%$ com 80 dias, enquanto que sua maior precisão foi de $63,28\%$ com 98 dias de treino.
         
@@ -687,61 +720,28 @@
         
         \paragraph{}Ao observar a evolução das precisões e realocações, pode-se perceber um ruído muito maior no MLP. A curva traçada para ambas as medidas pela regressão é consideravelmente mais suave, fator que indica maior estabilidade e, portanto, confiabilidade e poder preditivo do algoritmo.
         
+        \paragraph{}Nota-se que a maior precisão obtida pelos modelos utilizados, de $63,28\%$, ainda encontra-se abaixo da mínima precisão segura definida na equação \ref{eq:precisao-minima}. Para garantir a máxima segurança do modelo, segundo essa relação, seria preciso alcançar pelo menos $66,67\%$ de precisão. Apesar disso, dada a proximidade da precisão real com a mínima segura, é plausível a elaboração de uma estratégia mais arrojada que considere puramente o sinal de saída do presente modelo como disparador de ordens de compra e venda devido a improbabilidade de existir uma parcela elevada de falsos positivos com máximo prejuízo.
         
-        
-        
-                
-                
-        
-
-\chapter{Revisão Bibliográfica}
-
-  Para ilustrar a completa adesão ao estilo de citações e listagem de
-  referências bibliográficas, a Tabela \ref{tab:citation} apresenta citações de alguns dos trabalhos contidos na norma fornecida pela CPGP da
-  COPPE, utilizando o estilo numérico.
-
-  \begin{table}[h]
-  \caption{Exemplos de citações utilizando o comando padrão
-    \texttt{\textbackslash cite} do \LaTeX\ e
-    o comando \texttt{\textbackslash citet},
-    fornecido pelo pacote \texttt{natbib}.}
-  \label{tab:citation}
-  \centering
-  {\footnotesize
-  \begin{tabular}{|c|c|c|}
-    \hline
-    Tipo da Publicação & \verb|\cite| & \verb|\citet|\\
-    \hline
-    Livro & \cite{book-example} & \citet{book-example}\\
-    Artigo & \cite{article-example} & \citet{article-example}\\
-    Relatório & \cite{techreport-example} & \citet{techreport-example}\\
-    Relatório & \cite{techreport-exampleIn} & \citet{techreport-exampleIn}\\
-    Anais de Congresso & \cite{inproceedings-example} &
-      \citet{inproceedings-example}\\
-    Séries & \cite{incollection-example} & \citet{incollection-example}\\
-    Em Livro & \cite{inbook-example} & \citet{inbook-example}\\
-    Dissertação de mestrado & \cite{mastersthesis-example} &
-      \citet{mastersthesis-example}\\
-    Tese de doutorado & \cite{phdthesis-example} & \citet{phdthesis-example}\\
-    \hline
-  \end{tabular}}
-  \end{table}
-  
-  É importante notar que, segundo a \href{http://www.poli.ufrj.br/graduacao_projeto.php}{Norma para a Elaboração Gráfica do Projeto de Graduação} da Escola Politécnica da UFRJ para trabalhos de conclusão de curso de engenharia de julho de 2012, as referências bibliográficas podem ser apresentadas de duas formas: $(i)$ Referências numeradas e $(ii)$ Referências em ordem alfabética. Para exibição numerada, em que a exibição das referências bibliográficas segue a ordem de citação usada no texto, use o comando \texttt{\textbackslash bibliographystyle\{coppe-unsrt\}}. Para exibição de referências bibliográficas em ordem alfabética, basta usar o comando \texttt{\textbackslash bibliographystyle\{coppe-plain\}} ao final do documento. 
-  
-  
-  \chapter{Método Proposto}
-  
-  
-  
-  \chapter{Resultados e Discussões}
-  
-  
   
   \chapter{Conclusões}
   
-  
-  
+    \section{Conclusões Gerais}
+    
+        \paragraph{}O presente trabalho teve como objetivo aplicar técnicas de aprendizado de máquina para gerar modelos de previsão de direção dos preços. A partir da validação utilizando testes históricos das séries temporais, foi possível verificar que a tomada de decisão apoiada por algoritmos de inteligência artificial pode ser muito mais eficaz do que uma simples análise técnica tradicional.
+        
+        \paragraph{}Ao aplicar a estratégia definida para o caso de uso real das ações da Petrobrás (PETR4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão considerávelmente maior do que um modelo aleatório. Apesar do caso de uso não apresentar o requisito mínimo de precisão para garantir o lucro, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
+        
+        \paragraph{}Mesmo restringindo o caso de uso à análise de um ativo específico da BM\&FBOVESPA, o agrupamento dos dados foi implementado com o objetivo de ser generalizado para todo o conjunto de dados de negociação em uma base diária de \textit{ticks}, incluindo mini-índices e opções. A flexibilização pensada no \textit{software} implementado para a geração dos indicadores de análise técnica também oferece a possibilidade de customização e adaptação para ativos de outra natureza de flutuação, permitindo análises adequadas aos mais diversos fatores que regem a oscilação dos preços de uma ação.
+        
+    \section{Trabalhos Futuros}
+        
+        \paragraph{}Em relação ao conjunto de dados de entrada do modelo de predição, nota-se uma predominância muito maior de indicadores técnicos aplicados puramente ao dados provenientes do conjunto de dados negociados. Com o objetivo de aprofundar a análise para considerar a volatilidade de um ativo, torna-se interessante a consideração das informações do livro de ofertas para a criação de variáveis com informações sobre a quantidade de ordens de compra e venda em um intervalo, o valor dessas ordens e outras características.
+        
+        \paragraph{}Em relação ao agrupamento dos dados, foi utilizada uma abordagem por separação de janelas de tempo e previsão de forma que uma janela de tempo nunca colidisse com a outra. Por causa disso, a implementação de janelas deslizantes no tempo podem ser úteis para aumentar a quantidade de dados adquiridos para o treinamento do modelo.
+        
+        \paragraph{}Para consumo diário de um agente autônomo responsável pelas negociações, ainda é necessária a aquisição manual dos dados nos servidores públicos da BM\&FBOVESPA e posterior execução do \textit{software} desenvolvido para o pré-processamento. Neste caso, uma solução de agendamento que recorrentemente verificasse a disponibilização de novos arquivos de negociação seguida de um pré-processamento e agrupamento dos mesmos poderia automatizar esse esforço.
+        
+        \paragraph{}Após treinado o modelo com os dados agrupados, torna-se necessária a exposição de um serviço que retorne o sinal de previsão do próximo intervalo baseado nas entradas de indicadores de análise técnica descritos ao longo do trabalho. Para garantir a disponibilidade desse serviço, torna-se interessante a hospedagem do mesmo em algum provedor de nuvem como \textit{Amazon Web Services} ou \textit{Google Cloud Computing}. A lógica a ser executada a cada requisição, dessa maneira, seria a predição desses dados de entrada em um modelo já treinado, salvo em um arquivo binário e carregado em memória para executar imediatamente as previsões.
   
 
   \backmatter
@@ -749,7 +749,48 @@
   \bibliography{example}
 
   \appendix 
-  \chapter{Algumas Demonstrações}\label{cap:params}
+  \chapter{Parâmetros de calibração}\label{cap:params}
+  
+    \paragraph{}Na lista abaixo, estão presentes todos os parâmetros de podem ser calibrados na geração de dados agrupados. Além dos períodos para os indicadores de análise técnica, também é possível selecionar o tamanho das janelas de tempo e previsão e limites superiores e inferiores para estruturar a estratégia de compra e venda.
+  
+    \begin{listing}
+    \begin{minted}[frame=single,
+                   framesep=3mm,
+                   linenos=true,
+                   xleftmargin=21pt,
+                   tabsize=4]{js}
+    {
+      "negFolderPath": "C:\\MarketData\\Bovespa\\",
+      "buyFolderPath": "C:\\MarketData\\AllData\\",
+      "sellFolderPath": "C:\\MarketData\\AllData\\",
+      "negFilePrefix": "NEG_",
+      "buyFilePrefix": "OFER_CPA_",
+      "sellFilePrefix": "OFER_VDA_",
+      "dateSuffixFormat": "yyyyMMdd",
+      "instrumentSymbol": "PETR4",
+      "slidingWindowMinutes": 3,
+      "RSIPeriods": 14,
+      "SMAPeriods": 14,
+      "BollingerBandsPeriods": 14,
+      "BuyTimeHold": 1,
+      "CsvCharSeparator": ",",
+      "PeriodsToNormalize": 28,
+      "OutputCsvPath": "C:\\Projects\\GitHub\\stock-analysis\\",
+      "ShortMACDPeriods": 12,
+      "LongMACDPeriods": 26,
+      "AroonIndicatorPeriods": 14,
+      "ConsiderOrderFiles": false,
+      "InterpolateWindows": false,
+      "IndexStockCodeVariation": false,
+      "ATRPeriods": 14,
+      "CMOPeriods": 14,
+      "ROCPeriods": 1,
+      "MinimumVariationOfInterest": 0.01
+    }
+    \end{minted}
+    \caption{Arquivo JSON com propriedades de calibração dos indicadores de análise técnica} 
+    \label{json-example}
+    \end{listing}
 \end{document}
 %% 
 %%
