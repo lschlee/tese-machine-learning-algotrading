@@ -149,13 +149,13 @@
   
     \paragraph{}Algoritmos de negociação vêm ganhando cada vez mais força conforme a globalização se intensifica. Nos Estados Unidos, estima-se que aproximadamente ${65\%}$ de todo o volume negociado na bolsa de valores seja movimentado por agentes autônomos (robôs) executando algoritmos de HFT (High Frequency Trading). Em 2012, no Brasil, o volume negociado por Acesso Direto ao Mercado, ou seja, plataformas que conectam o cliente final ao ambiente eletrônico de negociações da bolsa \cite{parceiros-dma}, movimentaram R\$$104,5$ milhões \cite{moreno-hft}. 
   
-    \paragraph{}Apesar do conceito de HFT já estar difundido e vastamente aplicado, grande parte das estratégias desse grupo de algoritmos baseia-se em análises fundamentalistas de mercado, exigindo um conhecimento aprofundado do domínio e um refinamento milimetricamente calibrado na implementação de regras que irão executar a negociação. 
+    \paragraph{}Apesar do conceito de HFT (\textit{High Frequency Trading}) já estar difundido e vastamente aplicado, grande parte das estratégias desse grupo de algoritmos baseia-se em análises fundamentalistas de mercado, exigindo um conhecimento aprofundado do domínio e um refinamento milimetricamente calibrado na implementação de regras que irão executar a negociação. 
     
     \paragraph{}Ainda assim, um algoritmo que executa puramente um conjunto de regras não é totalmente seguro para realizar negociações. Dessa forma, a aplicação de técnicas de aprendizado de máquina podem auxiliar no poder preditivo desses algoritmos, identificando padrões passados e gerando sinais para tomadas de decisão mais seguras.
     
   \section{Objetivos}
   
-    \paragraph{}O objetivo do trabalho é desenvolver e modelar estratégias direcionais de negociação de alta frequência, ou seja, indicar se um determinado ativo apresentará alta no período imediatamente após o intervalo em que foi analisado. Sendo assim, se o modelo indicar que haverá alta, um futuro agente autônomo enviará uma ordem de compra à mercado e uma ordem de venda à mercado assim que o preço do ativo sendo avaliado ultrapassar um limiar de preço ou intervalo de tempo pré-determinado. 
+    \paragraph{}O objetivo do trabalho é desenvolver e modelar estratégias direcionais de negociação de alta frequência com a utilização de técnicas de aprendizado de máquina para indicar se um determinado ativo apresentará alta no período imediatamente após o intervalo em que foi analisado. Sendo assim, se o modelo indicar que haverá alta, um futuro agente autônomo a consumir o modelo receberá um sinal positivo, podendo dessa forma enviar ordens de compra e venda ao mercado. 
   
   \section{Metodologia}
   
@@ -163,36 +163,36 @@
     
     \paragraph{}A principal função dessa etapa de pré-processamento dos dados brutos é o agrupamento em janelas de tempo para que indicadores de análise técnica, geralmente aplicados em intervalos diários, pudessem ser aplicados em intervalos de minutos. Dessa forma, o intervalo pode conter informações históricas a partir desses indicadores, gerando, por exemplo, valores de médias móveis ou indicadores que dependam de intervalos anteriores. 
     
-    \paragraph{}A saída do modelo, \textbf{y}, pode assumir valores de 1 e 0, indicando que deve ou não ser enviada uma ordem de compra ou, mais precisamente, que haverá alta ou baixa no preço do ativo no próximo minuto, respectivamente.
+    \paragraph{}A saída do modelo, \textbf{y}, pode assumir valores de 1 e 0, indicando se deve ou não ser enviada uma ordem de compra ou, mais precisamente, se haverá alta ou baixa no preço do ativo no próximo minuto, respectivamente.
     
-    \paragraph{}Após a etapa de agrupamento dos dados e geração de indicadores, os dados são enviados para um arquivo \textit{CSV (Comma-Separated Values)} para serem consumidos pelo modelo.
+    \paragraph{}Após a etapa de agrupamento dos dados e geração de indicadores, os dados são armazenados em um arquivo \textit{CSV (Comma-Separated Values)} para futuro consumo.
     
     \paragraph{}Na etapa de consumo dos dados gerados, foi utilizada a linguagem de programação \textit{Python} e algumas bibliotecas orientadas para a ciência de dados, como o \textit{scikit-learn}, \textit{Pandas}, \textit{Numpy}, \textit{Seaborn} e \textit{MatplotLib}.
     
     \paragraph{}Com o auxílio das diversas opções de normalização dos dados oferecidas pelo \textit{scikit-learn}, foram feitas normalizações logarítmicas e de máximo e mínimo para as \textit{features} o conjunto de dados. Dessa forma, todas as variáveis de entrada do modelo possuíam variações entre 0 e 1.
     
-    \paragraph{}Através do \textit{scikit-learn}, também foram utilizados modelos de aprendizado de máquina supervisionado para a previsão dos dados de teste. Dessa maneira, o MLP (\textit{MultiLayer Perceptron}) e a Regressão Logística foram escolhidos como modelos para a previsão dos dados.
+    \paragraph{}Através do \textit{scikit-learn}, também foram utilizados modelos de aprendizado de máquina supervisionado para a previsão dos dados de teste. Dessa maneira, o MLP (\textit{MultiLayer Perceptron}) e a Regressão Logística foram escolhidos para obter-se uma base comparativa entre modelos de redes neurais e regressão linear.
     
     \paragraph{}Por fim, para a validação dos modelos obtidos, foi utilizada uma variação da validação cruzada para séries temporais, de forma que, para um determinado intervalo de tempo, os dados de testes fossem sempre futuros em relação aos dados de treino.
   
   \section{Descrição}
   
-    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre o mercado de capitais e bolsa de valores, assim como são negociados seus ativos. Nele, também será feita uma contextualização das negociações de alta frequência e o que são algoritmos HFT, assim como os trabalhos presentes na literatura sobre HFT e aprendizado de máquina.
+    \paragraph{}No capítulo 2 são levantados alguns fundamentos teóricos sobre o mercado de capitais e bolsa de valores, assim como são negociados seus ativos. Nele, também será feita uma contextualização das negociações de alta frequência e o que são algoritmos HFT (\textit{High Frequency Trading}), assim como os trabalhos presentes na literatura sobre HFT e aprendizado de máquina.
     
-    \paragraph{}O capítulo 3 introduz as informações provenientes dos dados brutos da BM\&FBOVESPA, assim como as técnicas utilizadas para pré-processá-los. Nele, também serão discutidos os diversos indicadores de análise técnicas aproveitados como \textit{features} no modelo e como foi realizada a normalização desses indicadores.
+    \paragraph{}O capítulo 3 introduz o procedimento de aquisição das informações provenientes dos dados brutos da BM\&FBOVESPA, assim como as técnicas utilizadas para pré-processá-los. Nele, também serão discutidos os diversos indicadores de análise técnicas aproveitados como \textit{features} no modelo e como foi realizada a normalização desses indicadores.
     
     \paragraph{}O capítulo 4 descreve a estratégia utilizada para a geração da variável de saída do modelo e os diferentes cenários em que um sinal de direção dos preços pode ser ou não disparado.
     
     \paragraph{}No capítulo 5, são discutidos os modelos utilizados para a previsão dos dados de teste e as técnicas de validação utilizadas.
     
-    \paragraph{}O capítulo 6 mostra os resultados e discussões obtidos para um determinado ativo do mercado brasileiro.
+    \paragraph{}O capítulo 6 mostra os resultados e discussões obtidos para uma determinada ação do mercado brasileiro, a PETR4, que representa as ações preferências da Petrobrás.
     
-    \paragraph{}Por fim, no capítulo 7 são levantadas as conclusões do projeto, indicando as limitações encontradas e sugestões para evoluções do trabalho realizado.
+    \paragraph{}Por fim, no capítulo 7, são levantadas as conclusões do projeto, indicando as limitações encontradas e sugestões para evoluções do trabalho realizado.
   
 
 \chapter{Fundamentos Teóricos}
   
-    \paragraph{}Neste capítulo, são introduzidos alguns conceitos base para o entendimento e desenvolvimento do projeto. Nas próximas seções, são feitas contextualizações sobre o Mercado de Capitais, Bolsa de Valores e como as HFT se inserem nesse conexto.
+    \paragraph{}Neste capítulo, são introduzidos alguns conceitos base para o entendimento e desenvolvimento do projeto. Nas próximas seções, são feitas contextualizações sobre o Mercado de Capitais, Bolsa de Valores e como os algoritmos de HFT se inserem nesse conexto.
     
     \section{Mercado de Capitais e Bolsa de Valores}
         \paragraph{}O Mercado Capitais é um sistema de distribuição de valores imobiliários que permite potencializar o fluxo financeiro entre vários agentes econômicos, aumentando a liquidez dos vários títulos existentes. Esse mercado, formado por corretoras, bancos, bolsa de valores e outras insituições financeiras, facilita o investimento em grandes empreendimentos e permite aos diferenes agentes econômicos a compra de parte da empresa por meio de ações, que são as menores frações do capital social de uma empresa. As ações, por sua vez, são uma forma veloz de atração de investimento para que a empresa consiga reinvestir no seu próprio crescimento \cite{barreto-mercado-capitais}.
@@ -207,11 +207,11 @@
         
     \section{Algoritmos HFT}
         
-        \paragraph{}Algoritmos de negociação vem sido cada vez mais utilizados nas últimas décadas. Segundo \citet{chaboud-hft}, algoritmos de negociação classificam-se como uma interface direta entre computadores e plataformas de negociação, sendo capaz de posicionar ordens de compra e venda sem quaisquer intervenção humana.
+        \paragraph{}Algoritmos de negociação vêm sendo cada vez mais utilizados nas últimas décadas. Segundo \citet{chaboud-hft}, esses algoritmos classificam-se como uma interface direta entre computadores e plataformas de negociação, sendo capaz de posicionar ordens de compra e venda sem a necessidade de intervenção humana.
         
-        \paragraph{}O termo HFT, por sua vez, é mais recente e trata-se de um subgrupo dos algoritmos de negociação mencionados anteriormente. Esse grupo de algoritmos tem como característica a execução de operações de negociação a nível de milissegundo.
+        \paragraph{}O termo HFT (\textit{High Frequency Trading}), por sua vez, é mais recente e trata-se de um subgrupo dos algoritmos de negociação mencionados anteriormente. Esse grupo de algoritmos tem como característica a execução de operações de negociação a nível de milissegundo.
         
-        \paragraph{}O grupo de algoritmos de negociação e, portanto, as HFT, podem ser vistas como ferramentas para os \textit{traders} ou especuladores que observam parâmetros de mercado em tempo real para produzirem decisões de negociação. 
+        \paragraph{}O grupo de algoritmos de negociação e, portanto, as HFT, podem ser vistas como ferramentas para os \textit{traders} ou especuladores que observam parâmetros de mercado em tempo real para produzirem decisões de negociação, compondo a técnica popularmente conhecida como \textit{Algotrading}. 
         
         \paragraph{}Algoritmos HFT tem como característica uma rápida atualização das ordens enviadas e não permanecem com a posição após o fechamento do pregão. As estratégias visam um lucro pequeno em um montante muito grande negociações, portanto é mais interessante performar em mercados com ativos de alta liquidez. Depois do algoritmo realizar uma ordem, seja esta de compra ou venda, o tempo em que a posição é mantida é curto \cite{gomber-hft}.
         
@@ -294,11 +294,11 @@
       
       \paragraph{}Cada linha desse arquivo, portanto, representa um \textit{tick}, ou seja, o dado mais granular possível indicando uma operação de negociação, sem informações históricas associadas.
       
-      \paragraph{}Seguindo a abordagem sugerida por \citet{everton-silva-master}, os \textit{ticks} foram agrupados em um intervalo determinado de minutos, chamado de janela de tempo. Dessa forma, o dado granular a ser consumido pelo futuro modelo agora possui informações mais densas e pode ser comparado com janelas anteriores para criar indicadores extensamente usados pelo mercado financeiro, oferecendo um maior poder de previsão. Com os preços de abertura e fechamento de um determinado ativo para cada janela, é possível recriar médias móveis e outros indicadores que necessitem de informações de fechamento passadas.
+      \paragraph{}Seguindo a abordagem sugerida por \citet{putra-hft}, os \textit{ticks} foram agrupados em um intervalo determinado de minutos, chamado de janela de tempo. Dessa forma, o dado granular a ser consumido pelo futuro modelo agora possui informações mais densas e pode ser comparado com janelas anteriores para criar indicadores extensivamente usados pelo mercado financeiro, oferecendo um maior poder de previsão. Com os preços de abertura e fechamento de um determinado ativo para cada janela, é possível recriar médias móveis e outros indicadores que necessitem de informações históricas dos preços.
       
       \paragraph{}Com o intuito de realizar o agrupamento e pré-processamento dos dados brutos, foi desenvolvido um \textit{software} especificamente para o projeto. Para tal, foi escolhida a linguagem de programação C\#, compilada e orientada a objetos, rodando sobre o \textit{framework} multiplataforma .NET Core. Dessa forma, alcançou-se uma performance satisfatória na geração dos dados agrupados.
       
-      \paragraph{}O \textit{software}, compatível com qualquer sistema operacional em uma máquina convencional, recebe o caminho de um diretório contendo todos os arquivos de negociação da BM\&FBOVESPA comprimidos. Ao ser executado, descomprime cada arquivo, filtra pelo ativo determinado no seu dicionário de parâmetros e agrupa os \textit{ticks} para formar janelas de tempo com minutos de intervalo também pré-determinados no dicionário. Tais janelas de tempo possuem, por sua vez, seus preços de abertura e fechamento, valores máximos e mínimos, total de negociações e quantidade total de papéis em cada negociação. Dessa maneira, é possível calcular seus indicadores para uma base diária de janelas de tempo, os quais são descritos na próxima seção.
+      \paragraph{}O \textit{software}, compatível com qualquer sistema operacional em uma máquina convencional, recebe o caminho de um diretório contendo todos os arquivos de negociação da BM\&FBOVESPA comprimidos. Ao ser executado, descomprime cada arquivo, filtra pelo ativo determinado no seu dicionário de parâmetros, descritos no apêndice \ref{cap:params}, e agrupa os \textit{ticks} para formar janelas de tempo com minutos de intervalo também pré-determinados no dicionário. Tais janelas de tempo possuem, por sua vez, seus preços de abertura e fechamento, valores máximos e mínimos, total de negociações e quantidade total de papéis em cada negociação. Dessa maneira, é possível calcular indicadores técnicos do mercado financeiro para uma base de intervalos em minutos.
       
       \section{Atributos do Conjunto de Dados de Entrada}
       
@@ -519,7 +519,7 @@
         
             \paragraph{}Com o objetivo de se obter lucro, o modelo deve ser capaz de prever movimentações de preço para que ordens de compra e venda possam ser enviadas no momento certo. Dada essa característica intrínseca do modelo, a variável de saída deve ser gerada a partir de um determinado intervalo futuro, de modo que exista alguma sequência de compras e vendas que resultem em uma diferença positiva de preço.
             
-            \paragraph{}Considerando que as janelas de tempo em que os dados brutos foram agrupados possuem um intervalo de tempo $t$, o interesse está, portanto, no intervalo de tempo contido entre $t$ e $t + t'$, sendo $t'$ preferencialmente menor do que $t$ para que se obtenha um maior poder de previsão a curto prazo.
+            \paragraph{}Considerando que as janelas de tempo em que os dados brutos foram agrupados possuem um intervalo de tempo $t$, o interesse está, portanto, no intervalo de tempo contido entre $t$ e $t + t'$, chamado de janela de decisão, sendo $t'$ preferencialmente menor do que $t$ para que se obtenha um maior poder de previsão a curto prazo.
             
             \paragraph{}A imagem \ref{img:dados-agrupados} ilustra o cenário descrito. Cada intervalo de tempo $t$ utiliza-se do intervalo verde $t'$ imediatamente posterior, que se inicia no mesmo momento da segunda janela usada para gerar o segundo intervalo.
             
@@ -545,12 +545,12 @@
                 \centering
             \end{figure}
             
-            \paragraph{}Para ilustrar uma situação de não-compra, observa-se a imagem \ref{img:estrategia-saida}, que representa a variação dos preços ao longo do tempo. Mesmo o preço tendo ultrapassado o limite superior $p + x$ ao fim do intervalo $t'$, a saída indicando o sinal de compra não é gerada porque o limite inferior $p - y$ foi ultrapassado anteriormente.
+            \paragraph{}Para ilustrar uma situação de não-compra, observa-se a imagem \ref{img:estrategia-saida}, que representa a variação dos preços ao longo do tempo. Mesmo o preço tendo ultrapassado o limite superior $p + x$ ao fim do intervalo $t'$, a saída indicando o sinal de compra não é gerada porque o limite inferior $p - y$ foi ultrapassado anteriormente nesse mesmo intervalo.
             
             \paragraph{}Destaca-se, nessa abordagem, que o maior prejuízo que pode ser obtido por um falso positivo é de y. É válido mencionar também que nem todo falso positivo, nessa perspectiva, causará prejuízo. Na situação em que o preço de fechamento supera o valor de abertura em $z$, sendo $z < x$, é possível obter lucro sem que o sinal direcionador de compra seja disparado.
             
         \section{Geração do sinal de saída}
-            \paragraph{}Dada a estratégia definida na seção anterior, conclui-se que trata-se de um problema de classificação: se o preço tiver variação positiva maior do que $x$, tem-se a saída do modelo com o valor 1, o que significa que ordens de compra e venda serão enviadas conforme definido na seção anterior. Se a variação de preço for positiva mas não ultrapassar o limite superior $x$ ou se a variação for negativa, tem-se a saída com o valor $1$.
+            \paragraph{}Dada a estratégia definida na seção anterior, conclui-se que trata-se de um problema de classificação: se o preço tiver variação positiva maior do que $x$, tem-se a saída do modelo com o valor 1, o que significa que ordens de compra e venda serão enviadas conforme definido na seção anterior. Se a variação de preço for positiva mas não ultrapassar o limite superior $x$ ou se a variação for negativa, tem-se a saída com o valor $0$.
             
             \paragraph{}Dessa forma, o problema reduz-se a um classificador binário, em que temos somente 2 classes possíveis para serem previstas.
             
@@ -627,7 +627,7 @@
                 
                 \paragraph{}Um verdadeiro positivo é quando uma classe classificada como "1" no conjunto de testes de fato possui o valor verdadeiro "1". Um falso positivo, por sua vez, refere-se a uma classe que é classificada como "1" enquanto possui "0" como valor verdadeiro. Pensamento análogo pode ser aplicado aos verdadeiros negativos e falsos negativos.
                 
-                \paragraph{}Para o domínio do trabalho, tem-se como interesse óbvio um modelo que seja capaz de obter mais acertos do que erros para obter lucro e, além disso, identifique o maior número possível de oportunidades de compra. A a matriz de confusão pode ser reaproveitada para gerar os parâmetros de validação abaixo.
+                \paragraph{}Para o domínio do trabalho, tem-se como interesse óbvio um modelo que seja capaz de obter mais acertos do que erros para obter lucro e, além disso, identifique o maior número possível de oportunidades de compra. Dessa maneira, a matriz de confusão pode ser reaproveitada para gerar os parâmetros de validação abaixo.
                 
                 \subsubsection{Revocação}
                     \paragraph{}A revocação é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de verdadeiros do conjunto de teste. Pode ser calculada pela fórmula abaixo:
@@ -639,7 +639,7 @@
                     \paragraph{}Onde R é a revocação, FN é a quantidade de amostras classificadas como falso negativas e TP é o total de valores positivos do conjunto de teste.
                     
                 \subsubsection{Precisão}
-                    \paragraph{}A precisão é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de previsões verdadeiras do conjunto de teste. Pode ser calculada pela fórmula abaixo:
+                    \paragraph{}A precisão é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de previsões classificadas como verdadeiras no conjunto de teste. Pode ser calculada pela fórmula abaixo:
                     
                     \begin{equation}
                         P = \frac{VP}{VP + FP}
@@ -651,7 +651,7 @@
                 
                 \paragraph{}Estendendo a análise da precisão aplicada na estratégia definida na seção \ref{sec:estrategia-saida}, é possível identificar imediatamente um mínimo de precisão segura, baseado nos limites superior $x$ e inferior $y$, que o modelo deve alcançar para o cenário de prejuízos máximos. Um cenário de prejuízo máximo, como discutido no capítulo anterior, se caracteriza quando todas as previsões classificadas como falso positivas alcançam o limite inferior $y$, causando um prejuízo de $N \cdot Y$, sendo $N$ o número de papéis negociados. 
                 
-                \paragraph{}Supondo que, para obter lucro, o volume de verdadeiros positivos vezes o lucro precisa ser maior do que o volume de falsos positivos vezes a perda, tem-se a seguinte relação:
+                \paragraph{}Definindo que, para obter lucro, o volume de verdadeiros positivos vezes o lucro precisa ser maior do que o volume de falsos positivos vezes a perda, tem-se a seguinte relação:
                 
                 \begin{equation}
                     V \cdot P \cdot x \geq V \cdot (1 - P) \cdot y
@@ -705,14 +705,14 @@
         \begin{figure}[h!]
             \caption{Performance da Regressão Logística}
             \label{img:performance-logreg}
-            \includegraphics[width=12cm]{performance-logreg.png}
+            \includegraphics[width=12.1cm]{performance-logreg.png}
             \centering
         \end{figure}
         
         \begin{figure}[h!]
             \caption{Performance do \textit{Multi-layer Perceptron}}
             \label{img:performance-mlp}
-            \includegraphics[width=12cm]{mlp-performance.png}
+            \includegraphics[width=12.1cm]{mlp-performance.png}
             \centering
         \end{figure}
         
@@ -729,9 +729,9 @@
     
         \paragraph{}O presente trabalho teve como objetivo aplicar técnicas de aprendizado de máquina para gerar modelos de previsão de direção dos preços. A partir da validação utilizando testes históricos das séries temporais, foi possível verificar que a tomada de decisão apoiada por algoritmos de inteligência artificial pode ser muito mais eficaz do que uma simples análise técnica tradicional.
         
-        \paragraph{}Ao aplicar a estratégia definida para o caso de uso real das ações da Petrobrás (PETR4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão considerávelmente maior do que um modelo aleatório. Apesar do caso de uso não apresentar o requisito mínimo de precisão para garantir o lucro, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
+        \paragraph{}Ao aplicar a estratégia definida para o caso de uso real das ações da Petrobrás (PETR4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão considerávelmente maior do que um modelo aleatório. Apesar do caso de uso não ter apresentado o requisito mínimo de precisão para garantir o lucro, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
         
-        \paragraph{}Mesmo restringindo o caso de uso à análise de um ativo específico da BM\&FBOVESPA, o agrupamento dos dados foi implementado com o objetivo de ser generalizado para todo o conjunto de dados de negociação em uma base diária de \textit{ticks}, incluindo mini-índices e opções. A flexibilização pensada no \textit{software} implementado para a geração dos indicadores de análise técnica também oferece a possibilidade de customização e adaptação para ativos de outra natureza de flutuação, permitindo análises adequadas aos mais diversos fatores que regem a oscilação dos preços de uma ação.
+        \paragraph{}Mesmo restringindo o caso de uso à análise de um ativo específico da BM\&FBOVESPA, o agrupamento dos dados foi implementado com o objetivo de ser generalizado para qualquer ativo do mercado financeiro em uma base diária de \textit{ticks} que defina o mesmo \textit{layout} da tabela \ref{tab:layout-neg}, incluindo mini-índices e opções. A flexibilização pensada no \textit{software} implementado para a geração dos indicadores de análise técnica também oferece a possibilidade de customização e adaptação para ativos com outra natureza de flutuação, permitindo análises adequadas aos mais diversos fatores que regem a oscilação dos preços de uma ação.
         
     \section{Trabalhos Futuros}
         
