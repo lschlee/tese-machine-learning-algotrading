@@ -1,31 +1,3 @@
-%%
-%% This is file `example.tex',
-%% generated with the docstrip utility.
-%%
-%% The original source files were:
-%%
-%% coppe.dtx  (with options: `example')
-%% 
-%% This is a sample monograph which illustrates the use of `coppe' document
-%% class and `coppe-unsrt' BibTeX style.
-%% 
-%% \CheckSum{1416}
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
-%%
 \documentclass[grad,numbers]{coppe}
 \usepackage{amsmath,amssymb}
 \usepackage{hyperref}
@@ -44,13 +16,9 @@
   \foreigntitle{Machine Learning Techniques applied to AlgoTrading in the Stock Market}
   \author{Lucas}{Schlee de Brito Fernandes}
   \advisor{Prof.}{Heraldo}{Luís Silveira de Almeida}{D.Sc.}
-  \advisor{Prof.}{Flávio}{Luis de Mello}{Ph.D.}
 
-  \examiner{Prof.}{Nome do Primeiro Examinador Sobrenome}{D.Sc.}
-  \examiner{Prof.}{Nome do Segundo Examinador Sobrenome}{Ph.D.}
-  \examiner{Prof.}{Nome do Terceiro Examinador Sobrenome}{D.Sc.}
-  \examiner{Prof.}{Nome do Quarto Examinador Sobrenome}{Ph.D.}
-  \examiner{Prof.}{Nome do Quinto Examinador Sobrenome}{Ph.D.}
+  \examiner{Prof.}{Flávio Luis de Mello}{D.Sc.}
+  \examiner{Prof.}{Jomar Gozzi}{D.Sc.}
   
   
   
@@ -115,13 +83,13 @@
 
   \begin{abstract}
 
-  A cada dia no mercado de ações é possível identificar milhares de decisões tomadas automaticamente, sem a necessidade de intervenção humana. Apesar disso, essa tendência, considerada irreversível, ainda utiliza estratégias baseadas em regras bem definidas. Nesse contexto, o presente trabalho propõe a aplicação de técnicas de aprendizado de máquina para identificar padrões e prever a direção dos preços das ações para negociações de alta frequência.
+  A cada dia no mercado de ações é possível identificar milhares de decisões tomadas automaticamente, sem a necessidade de intervenção humana. Apesar disso, essa tendência, considerada irreversível, ainda utiliza estratégias baseadas em regras estritamente definidas. Nesse contexto, o presente trabalho propõe a aplicação de técnicas de aprendizado de máquina para identificar padrões e prever a direção dos preços das ações para negociações de alta frequência.
 
   \end{abstract}
 
   \begin{foreignabstract}
 
-  Each day in the stock market it`s possible to identify thousands of decisions made automatically, without the need for human intervention. Despite this, this trend, considered irreversible, still uses strategies based on well-defined rules. In this context, the present work proposes the application of machine learning techniques to identify patterns and predict the direction of stock prices for high frequency trades.
+  On each day in the stock market it`s possible to identify thousands of decisions made automatically, without the need for human intervention. Despite this fact, this irreversible trend still uses strategies based on strictly defined rules. In this context, the present work proposes the application of machine learning techniques to identify patterns and predict the direction of stock prices for high frequency trades.
 
   \end{foreignabstract}
 
@@ -671,8 +639,14 @@
                 
                 \paragraph{}Então:
                 
-                \begin{equation}\label{eq:precisao-minima}
+                \begin{equation}
                     P > \frac{1}{K + 1}
+                \end{equation}
+                
+                \paragraph{}Que é equivalente a:
+                
+                \begin{equation}\label{eq:precisao-minima}
+                    P > \frac{y}{x + y}
                 \end{equation}
                 
                 \paragraph{}Em suma, a partir da relação acima, pode ser definida uma precisão mínima que nunca causa prejuízos nos falsos positivos a partir dos limites $x$ e $y$. Destaca-se o cenário de que, mesmo obtendo uma precisão menor do que a mínima segura, ainda é possível obter lucro pelo modelo se houver uma parcela de falsos positivos que não ultrapassagem a margem inferior $y$.
@@ -687,7 +661,7 @@
         
         \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de 1 minuto a partir do tempo de fim da janela de tempo. 
         
-        \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. A escolha desses limites está intrinsecamente ligada com a distribuição das classes binárias "0" e "1" do conjunto de dados e, para esses limites, foi possível obter uma distribuição de $55,63\%$ da classe "1". A distribuição das classes próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}. Especificados os parâmetros de pré-processamento, o software C\# inicia o agrupamento dos dados para cada dia coletado na BM\&FBOVESPA.
+        \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. Com a escolha desses limites, os dados ficaram distribuídos com aproximadamente $66,7\%$ como classe "1" e, para o treinamento do modelo, foram excluídos aleatoriamente dados dessa classe para que a distribuição ficasse equilibrada. A distribuição das classes próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}. Especificados os parâmetros de pré-processamento, o software C\# inicia o agrupamento dos dados para cada dia coletado na BM\&FBOVESPA.
         
         \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representa o número de negociações dentro do intervalo especificado. 
         
@@ -700,27 +674,41 @@
         
         São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, é possível acompanhar a evolução das medidas até o máximo de cada métrica.
         
-        \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $90,56\%$ com 88 dias de treino e a máxima precisão foi de aproximadamente $63,07\%$, alcançada com 78 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $90,22\%$ com 80 dias, enquanto que sua maior precisão foi de $63,28\%$ com 98 dias de treino.
+        \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $62,57\%$ com 104 dias de treino e a máxima precisão foi de aproximadamente $75,73\%$, alcançada com 120 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $68,40\%$ com 107 dias, enquanto que sua maior precisão foi de $75,93\%$ com 119 dias de treino.
         
         \begin{figure}[h!]
             \caption{Performance da Regressão Logística}
             \label{img:performance-logreg}
-            \includegraphics[width=12.1cm]{performance-logreg.png}
+            \includegraphics[width=13.1cm]{performance-logreg.png}
             \centering
         \end{figure}
         
         \begin{figure}[h!]
             \caption{Performance do \textit{Multi-layer Perceptron}}
             \label{img:performance-mlp}
-            \includegraphics[width=12.1cm]{mlp-performance.png}
+            \includegraphics[width=13.1cm]{mlp-performance.png}
             \centering
         \end{figure}
         
-        \paragraph{}Apesar da maior precisão encontrada pelos modelos ter sido obtida com o \textit{Multi-Layer Perceptron}, o modelo necessitou de um conjunto de dados dos últimos 98 dias, 20 dias a mais do que o algoritmo de Regressão Logística necessitou para encontrar seu máximo de precisão. Para a realocação, o MLP necessitou de 8 dias a menos de treino para alcançar seu máximo de $90,22\%$, porém o maior valor, de $90,46\%$, foi alcançado pela Regressão Logística com 88 dias de treino.
+        \paragraph{}Ao observar a curva de precisão em ambos os modelos, nota-se que conforme os dias de treino aumentam, essa medida tende a crescer. A curva de sensibilidade ou realocação, apesar de ter apresentado um comportamento ascendente durante a maior parte da janela, apresentou uma queda após o seu máximo, indicando um limite de dados ótimos para a identificação de oportunidades de compra. A curva F1, representada em verde, indica uma média harmônica entre a precisão e a sensibilidade, acompanhando a evolução da performance das 2 medidas, estando sempre entre as mesmas.
         
-        \paragraph{}Ao observar a evolução das precisões e realocações, pode-se perceber um ruído muito maior no MLP. A curva traçada para ambas as medidas pela regressão é consideravelmente mais suave, fator que indica maior estabilidade e, portanto, confiabilidade e poder preditivo do algoritmo.
+        \paragraph{}Comparando os máximos valores de precisão obtidos no \textit{Multi-Layer Perceptron} e na Regressão Logística com a mínima precisão mínima segura definida na equação \ref{eq:precisao-minima}, nota-se que em ambos os modelos o mínimo de $66,7\%$ é superado. Espera-se, dessa forma, que sucessivas ordens de compra e venda obtenham lucro se enviadas respeitando a previsão do modelo.
         
-        \paragraph{}Nota-se que a maior precisão obtida pelos modelos utilizados, de $63,28\%$, ainda encontra-se abaixo da mínima precisão segura definida na equação \ref{eq:precisao-minima}. Para garantir a máxima segurança do modelo, segundo essa relação, seria preciso alcançar pelo menos $66,67\%$ de precisão. Apesar disso, dada a proximidade da precisão real com a mínima segura, é plausível a elaboração de uma estratégia mais arrojada que considere puramente o sinal de saída do presente modelo como disparador de ordens de compra e venda devido a improbabilidade de existir uma parcela elevada de falsos positivos com máximo prejuízo.
+        
+        \paragraph{}Apesar das medidas de precisão serem um indicador positivo na direção dos preços, elas não refletem necessariamente que o modelo obterá lucro. Em uma futura estratégia de compra e venda por um agente autônomo, ordens de compra e venda serão enviadas à mercado, isto é, terão de se adequar a um limiar acima e abaixo do valor nominal do preço para que sejam imediatamente realizadas. 
+        
+        \paragraph{}Com o objetivo de simular as movimentações automáticas e prever o lucro diário, o livro de ofertas com as ordens de compra e venda à mercado foi reconstruído com os dados de negociações a partir da última agressão de compra ou venda de um intervalo específico. Dessa forma, uma ordem de compra à mercado precisa atender necessariamente a última negociação em que a ordem de venda foi a agressora e vice-versa.
+        
+        \paragraph{}Levantados os lucros reais obtidos para cada janela de previsão, foi possível classificar a média de lucro dos dias utilizados para o treinamento do modelo. Para isso, somaram-se todas as previsões positivas, ou seja, verdadeiros positivos e falsos positivos de cada dia previsto para cada ciclo de dias de treinamento. A evolução dos lucros sobre a quantidade de dias de treino pode ser observada pela figura \ref{img:lucro}. O eixo $y$ do gráfico indica a soma dos ganhos por unidade de ação diariamente enquanto que o eixo $x$ indica o número de dias de treino.
+        
+        \begin{figure}[h!]
+            \caption{Evolução do lucro dos modelos}
+            \label{img:lucro}
+            \includegraphics[width=13.1cm]{lucro.png}
+            \centering
+        \end{figure}
+        
+        \paragraph{}Pela evolução dos lucros obtidos, nota-se que existe um lucro crescente que acompanha a performance de ambos os modelos. Para o MLP, por exemplo, o máximo lucro obtido coincidiu com o número de dias necessários para obter a maior performance de sensibilidade (realocação), 107 dias. O lucro máximo para a regressão logística, apesar de não coincidir com o número de dias de treino para o máximo de precisão e sensibilidade, também apresentou seu máximo próximo do máximo de precisão encontrado. 
         
   
   \chapter{Conclusões}
@@ -729,7 +717,7 @@
     
         \paragraph{}O presente trabalho teve como objetivo aplicar técnicas de aprendizado de máquina para gerar modelos de previsão de direção dos preços. A partir da validação utilizando testes históricos das séries temporais, foi possível verificar que a tomada de decisão apoiada por algoritmos de inteligência artificial pode ser muito mais eficaz do que uma simples análise técnica tradicional.
         
-        \paragraph{}Ao aplicar a estratégia definida para o caso de uso real das ações da Petrobrás (PETR4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão considerávelmente maior do que um modelo aleatório. Apesar do caso de uso não ter apresentado o requisito mínimo de precisão para garantir o lucro, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
+        \paragraph{}Ao aplicar a estratégia definida para o caso de uso real das ações da Petrobrás (PETR4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão considerávelmente maior do que um modelo aleatório. Dessa forma, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
         
         \paragraph{}Mesmo restringindo o caso de uso à análise de um ativo específico da BM\&FBOVESPA, o agrupamento dos dados foi implementado com o objetivo de ser generalizado para qualquer ativo do mercado financeiro em uma base diária de \textit{ticks} que defina o mesmo \textit{layout} da tabela \ref{tab:layout-neg}, incluindo mini-índices e opções. A flexibilização pensada no \textit{software} implementado para a geração dos indicadores de análise técnica também oferece a possibilidade de customização e adaptação para ativos com outra natureza de flutuação, permitindo análises adequadas aos mais diversos fatores que regem a oscilação dos preços de uma ação.
         
@@ -791,6 +779,10 @@
     \caption{Arquivo JSON com propriedades de calibração dos indicadores de análise técnica} 
     \label{json-example}
     \end{listing}
+    
+    \chapter{Código Base}
+        \paragraph{}Todo o código base desenvolvido para o trabalho foi hospedado no repositório público \textit{GitHub} e pode ser acessado na página do autor \url{https://github.com/lschlee}. Dessa maneira, o código pode ser reutilizado e evoluído por qualquer pessoa que quiser contribuir e evoluir com o presente trabalho. 
+        
 \end{document}
 %% 
 %%
