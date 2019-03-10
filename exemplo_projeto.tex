@@ -63,7 +63,7 @@
   
   
   
-  \date{02}{2019}
+  \date{03}{2019}
 
   \keyword{Aprendizado de Máquina}
   \keyword{Mercado Financeiro}
@@ -75,11 +75,19 @@
   
   \makecatalog
   
-  \dedication{A alguém cujo valor é digno desta dedicatória.}
+  \dedication{Aos familiares e amigos.}
 
   \chapter*{Agradecimentos}
 
-  Gostaria de agradecer a todos.
+  \paragraph{}Seria injusto começar qualquer agradecimento sem mencionar meus maiores apoiadores, educadores, amigos e companheiros que a vida forçadamente me proporcionou. Agradeço à minha mãe, Magda, por toda paciência e empenho em me tornar uma pessoa melhor a cada dia e ao meu pai, José Oswaldo, por todos os exemplos de empenho e pela generosidade dispensada ao longo da minha jornada. Agradeço também ao meu irmão Antônio que, mesmo com seus 8 anos de idade, é capaz de despertar a cada dia o melhor de mim. Sem vocês a minha vida não seria nada. Aos meus queridos avós, tios e primos, agradeço por vibrarem a cada conquista e por todos os ensinamentos.
+  
+  \paragraph{}Aos meus companheiros de jornada da UFRJ, dispenso os meus mais sinceros agradecimentos. Só nós conhecemos nossos desafios e sabemos o quão difícil foi chegar até o final desse ciclo. Obrigado pela união, companheirismo, generosidade e amizade. Tudo teria sido muito mais complicado sem vocês.
+  
+  \paragraph{}Aos colegas da Chemtech, agradeço por todo apoio, motivação e conselhos ao longo do projeto final. É muito bom poder contar no dia-a-dia com pessoas que eu admiro e me motivam todos os dias a me tornar um melhor profissional.
+  
+  \paragraph{}Ao meu orientador, Heraldo, agradeço por toda a disponibilidade, paciência, dicas e atenção quando foi preciso.
+  
+  \paragraph{}Por fim, agradeço à Carol, por todo apoio e companheirismo. Sei o quanto abrimos mão de programas juntos para a finalização desse trabalho. Muito obrigado por incentivar todos os meus planos e me tornar um homem melhor a cada dia.
 
   \begin{abstract}
 
@@ -597,7 +605,7 @@
                 
                 \paragraph{}Para o domínio do trabalho, tem-se como interesse óbvio um modelo que seja capaz de obter mais acertos do que erros para obter lucro e, além disso, identifique o maior número possível de oportunidades de compra. Dessa maneira, a matriz de confusão pode ser reaproveitada para gerar os parâmetros de validação abaixo.
                 
-                \subsubsection{Revocação}
+                \subsubsection{Revocação (Sensibilidade)}
                     \paragraph{}A revocação é definida como a quantidade de valores classificados corretamente como verdadeiros sobre a quantidade total de verdadeiros do conjunto de teste. Pode ser calculada pela fórmula abaixo:
                     
                     \begin{equation}
@@ -655,61 +663,104 @@
                 
     \chapter{Resultados e Discussões}
     
-        \paragraph{}Como estudo de caso para o projeto, foi escolhida a análise sobre a PETR4, ações preferências da Petrobrás, empresa que voltou a ocupar em outubro de 2018 o título de mais valiosa do Brasil, chegando a bater a marca de R\$358 bilhões \cite{petr4-intro}. 
+        \section{PETR4}
+    
+            \paragraph{}Como estudo de caso para o projeto, foi escolhida a análise sobre a PETR4, ações preferências da Petrobrás, empresa que voltou a ocupar em outubro de 2018 o título de mais valiosa do Brasil, chegando a bater a marca de R\$358 bilhões \cite{petr4-intro}. 
+            
+            \paragraph{}Para isso, foram importados todos os dados diários negociados da BM\&FBOVESPA de julho de 2018 até janeiro de 2019 e feito o pré-processamento descrito na seção \ref{sec:grouping}.
+            
+            \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de 1 minuto a partir do tempo de fim da janela de tempo. 
+            
+            \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. Com a escolha desses limites, os dados ficaram distribuídos com aproximadamente $66,7\%$ como classe "1" e, para o treinamento do modelo, foram excluídos aleatoriamente dados dessa classe para que a distribuição ficasse equilibrada. A distribuição das classes próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}. Especificados os parâmetros de pré-processamento, o software C\# inicia o agrupamento dos dados para cada dia coletado na BM\&FBOVESPA.
+            
+            \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representa o número de negociações dentro do intervalo especificado. 
+            
+            \begin{figure}[h]
+                \caption{Mapa de Calor das Correlações entre as Variáveis - PETR4}
+                \label{img:heatmap}
+                \includegraphics[width=15cm]{corr.png}
+                \centering
+            \end{figure}
+            
+            São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, é possível acompanhar a evolução das medidas até o máximo de cada métrica.
+            
+            \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $62,57\%$ com 104 dias de treino e a máxima precisão foi de aproximadamente $75,73\%$, alcançada com 120 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $68,40\%$ com 107 dias, enquanto que sua maior precisão foi de $75,93\%$ com 119 dias de treino.
+            
+            \begin{figure}[h!]
+                \caption{Performance da Regressão Logística - PETR4}
+                \label{img:performance-logreg}
+                \includegraphics[width=13.1cm]{performance-logreg.png}
+                \centering
+            \end{figure}
+            
+            \begin{figure}[h!]
+                \caption{Performance do \textit{Multi-layer Perceptron} - PETR4}
+                \label{img:performance-mlp}
+                \includegraphics[width=13.1cm]{mlp-performance.png}
+                \centering
+            \end{figure}
+            
+            \paragraph{}Ao observar a curva de precisão em ambos os modelos, nota-se que conforme os dias de treino aumentam, essa medida tende a crescer. A curva de sensibilidade ou realocação, apesar de ter apresentado um comportamento ascendente durante a maior parte da janela, apresentou uma queda após o seu máximo, indicando um limite de dados ótimos para a identificação de oportunidades de compra. A curva F1, representada em verde, indica uma média harmônica entre a precisão e a sensibilidade, acompanhando a evolução da performance das 2 medidas, estando sempre entre as mesmas.
+            
+            \paragraph{}Comparando os máximos valores de precisão obtidos no \textit{Multi-Layer Perceptron} e na Regressão Logística com a mínima precisão mínima segura definida na equação \ref{eq:precisao-minima}, nota-se que em ambos os modelos o mínimo de $66,7\%$ é superado. Espera-se, dessa forma, que sucessivas ordens de compra e venda obtenham lucro se enviadas respeitando a previsão do modelo.
+            
+            
+            \paragraph{}Apesar das medidas de precisão serem um indicador positivo na direção dos preços, elas não refletem necessariamente que o modelo obterá lucro. Em uma futura estratégia de compra e venda por um agente autônomo, ordens de compra e venda serão enviadas à mercado, isto é, terão de se adequar a um limiar acima e abaixo do valor nominal do preço para que sejam imediatamente realizadas. 
+            
+            \paragraph{}Com o objetivo de simular as movimentações automáticas e prever o lucro diário, o livro de ofertas com as ordens de compra e venda à mercado foi reconstruído com os dados de negociações a partir da última agressão de compra ou venda de um intervalo específico. Dessa forma, uma ordem de compra à mercado precisa atender necessariamente a última negociação em que a ordem de venda foi a agressora e vice-versa.
+            
+            \paragraph{}Levantados os lucros reais obtidos para cada janela de previsão, foi possível classificar a média de lucro dos dias utilizados para o treinamento do modelo. Para isso, somaram-se todas as previsões positivas, ou seja, verdadeiros positivos e falsos positivos de cada dia previsto para cada ciclo de dias de treinamento. A evolução dos lucros sobre a quantidade de dias de treino pode ser observada pela figura \ref{img:lucro}. O eixo $y$ do gráfico indica a soma dos ganhos por unidade de ação diariamente enquanto que o eixo $x$ indica o número de dias de treino.
+            
+            \begin{figure}[h!]
+                \caption{Evolução do lucro dos modelos - PETR4}
+                \label{img:lucro}
+                \includegraphics[width=13.1cm]{lucro.png}
+                \centering
+            \end{figure}
+            
+            \paragraph{}Pela evolução dos lucros obtidos, nota-se que existe um lucro crescente que acompanha a performance de ambos os modelos. Para o MLP, por exemplo, o máximo lucro obtido coincidiu com o número de dias necessários para obter a maior performance de sensibilidade (realocação), 107 dias. O lucro máximo para a regressão logística, apesar de não coincidir com o número de dias de treino para o máximo de precisão e sensibilidade, também apresentou seu máximo próximo do máximo de precisão encontrado. 
+            
+    \section{ITUB4}
+    
+        \paragraph{}De forma similar às ações da PETR4, foi feita a análise para as ações do banco Itaú, ITUB4.
         
-        \paragraph{}Para isso, foram importados todos os dados diários negociados da BM\&FBOVESPA de julho de 2018 até janeiro de 2019 e feito o pré-processamento descrito na seção \ref{sec:grouping}.
+        \paragraph{}Como janela de tempo para aplicação dos indicadores de analise técnica, foi utilizado o mesmo intervalo de 3 minutos. Para os limites superiores e inferiores da janela de previsão, x e y, foram utilizados os valores de $0,02$ e $0,03$, respectivamente. Dessa forma, tem-se a mínima precisão segura de $60\%$, como descrita na fórmula \ref{eq:precisao-minima}.
         
-        \paragraph{}Após a importação dos dados brutos, escolheu-se empricamente uma janela de tempo de 3 minutos para a geração os indicadores de análise técnica com a saída determinada pela estratégia descrita na seção \ref{sec:estrategia-saida} para o intervalo futuro de tempo de 1 minuto a partir do tempo de fim da janela de tempo. 
-        
-        \paragraph{}Para o limite superior e inferior dos preços, também utilizados na estratégia de formação da variável de saída, foram considerados o valores $x = 0,01$ e $y = 2x = 0,02$, respectivamente. Com a escolha desses limites, os dados ficaram distribuídos com aproximadamente $66,7\%$ como classe "1" e, para o treinamento do modelo, foram excluídos aleatoriamente dados dessa classe para que a distribuição ficasse equilibrada. A distribuição das classes próxima de $50\%$ é essencial, pois reduz o viés que pode ser obtido decorrente de uma distribuição desproporcional dos dados. O detalhamento de outros parâmetros como períodos de tempo para formação de cada indicador está especificado no apêndice \ref{cap:params}. Especificados os parâmetros de pré-processamento, o software C\# inicia o agrupamento dos dados para cada dia coletado na BM\&FBOVESPA.
-        
-        \paragraph{}Após o pré-processamento dos dados e normalização das variáveis, observou-se a correlação entre as variáveis de entrada e a variável de saída pelo mapa de calor representado pela figura \ref{img:heatmap}. Observa-se que, apesar das variáveis independentes de entrada possuirem uma correlação forte entre si em vários casos, a correlação dessas variáveis com a variável dependente de saída é fraca, alcançando seu maior valor com a variável que representa o número de negociações dentro do intervalo especificado. 
+        \paragraph{}Após o pré-processamento dos dados brutos, a distribuição entre as classes obtida foi de aproximadamente $49,96\%$ para a classe "1", indicando pouca perda no posterior equilíbrio para alcançar $50\%$ no treinamento. A correlação entre as variáveis de entrada e a de saída podem ser observadas pela figura \ref{img:corr-itub4}.
         
         \begin{figure}[h]
-            \caption{Mapa de Calor das Correlações entre as Variáveis}
-            \label{img:heatmap}
-            \includegraphics[width=15cm]{corr.png}
-            \centering
-        \end{figure}
+                \caption{Mapa de Calor das Correlações entre as Variáveis - ITUB4}
+                \label{img:corr-itub4} \includegraphics[width=15cm]{corr-itub4.png}
+                \centering
+            \end{figure}
         
-        São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, é possível acompanhar a evolução das medidas até o máximo de cada métrica.
-        
-        \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $62,57\%$ com 104 dias de treino e a máxima precisão foi de aproximadamente $75,73\%$, alcançada com 120 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $68,40\%$ com 107 dias, enquanto que sua maior precisão foi de $75,93\%$ com 119 dias de treino.
+        \paragraph{}Como pode ser observado pelas figuras \ref{img:performance-logreg-itub4} e \ref{img:performance-mlp-itub4}, a curva de sensibilidade (realocação) apresentou uma curva ascendente até o final da janela, indicando que o modelo ainda pode identificar mais oportunidades se treinado com mais dias. A curva de precisão, apesar da pouca variação no intervalo, apresentou uma curva ligeiramente crescente até alcançar o seu máximo antes de decrescer.
         
         \begin{figure}[h!]
-            \caption{Performance da Regressão Logística}
-            \label{img:performance-logreg}
-            \includegraphics[width=13.1cm]{performance-logreg.png}
-            \centering
-        \end{figure}
+                \caption{Performance da Regressão Logística - ITUB4}
+                \label{img:performance-logreg-itub4}
+                \includegraphics[width=13.1cm]{performance-logreg-itub4.png}
+                \centering
+            \end{figure}
+            
+            \begin{figure}[h!]
+                \caption{Performance do \textit{Multi-layer Perceptron} - ITUB4}
+                \label{img:performance-mlp-itub4}
+                \includegraphics[width=13.1cm]{performance-mlp-itub4.png}
+                \centering
+            \end{figure}
+        
+        \paragraph{}Pelo MLP, foram necessários mais 27 dias para alcançar o máximo de precisão, $56,64\%$, do que pela Regressão Logística. Esse último, por sua vez, alcançou $56,63\%$ de precisão com 72 dias de treinamento. Para as realocações, ambos os modelos aparentaram ser capazes de progredirem suas performances, apresentando máximo somente ao fim da janela de dias de treino.
+        
+        \paragraph{}Ao comparar a suavidade das curvas, nota-se que a Regressão Logística apresentou muito menos ruído do que as curvas do MLP, tanto para a precisão quanto para a realocação.
+        
+        \paragraph{}Para acompanhar a evolução dos lucros simulados dos modelos para ITUB4, foi gerada a figura \ref{img:lucro-itub4}. Nota-se que, mesmo a máxima precisão alcançada ter ficado abaixo da mínima precisão segura, o máximo lucro obtido pelos modelos para ITUB4, de $0,33$, foi maior do que o lucro obtido para as ações da PETR4, de aproximadamente $0,31$, que obteve uma taxa de precisão maior do que a segura.
         
         \begin{figure}[h!]
-            \caption{Performance do \textit{Multi-layer Perceptron}}
-            \label{img:performance-mlp}
-            \includegraphics[width=13.1cm]{mlp-performance.png}
+            \caption{Evolução do lucro dos modelos - ITUB4}
+            \label{img:lucro-itub4} \includegraphics[width=13.1cm]{lucro-itub4.png}
             \centering
         \end{figure}
-        
-        \paragraph{}Ao observar a curva de precisão em ambos os modelos, nota-se que conforme os dias de treino aumentam, essa medida tende a crescer. A curva de sensibilidade ou realocação, apesar de ter apresentado um comportamento ascendente durante a maior parte da janela, apresentou uma queda após o seu máximo, indicando um limite de dados ótimos para a identificação de oportunidades de compra. A curva F1, representada em verde, indica uma média harmônica entre a precisão e a sensibilidade, acompanhando a evolução da performance das 2 medidas, estando sempre entre as mesmas.
-        
-        \paragraph{}Comparando os máximos valores de precisão obtidos no \textit{Multi-Layer Perceptron} e na Regressão Logística com a mínima precisão mínima segura definida na equação \ref{eq:precisao-minima}, nota-se que em ambos os modelos o mínimo de $66,7\%$ é superado. Espera-se, dessa forma, que sucessivas ordens de compra e venda obtenham lucro se enviadas respeitando a previsão do modelo.
-        
-        
-        \paragraph{}Apesar das medidas de precisão serem um indicador positivo na direção dos preços, elas não refletem necessariamente que o modelo obterá lucro. Em uma futura estratégia de compra e venda por um agente autônomo, ordens de compra e venda serão enviadas à mercado, isto é, terão de se adequar a um limiar acima e abaixo do valor nominal do preço para que sejam imediatamente realizadas. 
-        
-        \paragraph{}Com o objetivo de simular as movimentações automáticas e prever o lucro diário, o livro de ofertas com as ordens de compra e venda à mercado foi reconstruído com os dados de negociações a partir da última agressão de compra ou venda de um intervalo específico. Dessa forma, uma ordem de compra à mercado precisa atender necessariamente a última negociação em que a ordem de venda foi a agressora e vice-versa.
-        
-        \paragraph{}Levantados os lucros reais obtidos para cada janela de previsão, foi possível classificar a média de lucro dos dias utilizados para o treinamento do modelo. Para isso, somaram-se todas as previsões positivas, ou seja, verdadeiros positivos e falsos positivos de cada dia previsto para cada ciclo de dias de treinamento. A evolução dos lucros sobre a quantidade de dias de treino pode ser observada pela figura \ref{img:lucro}. O eixo $y$ do gráfico indica a soma dos ganhos por unidade de ação diariamente enquanto que o eixo $x$ indica o número de dias de treino.
-        
-        \begin{figure}[h!]
-            \caption{Evolução do lucro dos modelos}
-            \label{img:lucro}
-            \includegraphics[width=13.1cm]{lucro.png}
-            \centering
-        \end{figure}
-        
-        \paragraph{}Pela evolução dos lucros obtidos, nota-se que existe um lucro crescente que acompanha a performance de ambos os modelos. Para o MLP, por exemplo, o máximo lucro obtido coincidiu com o número de dias necessários para obter a maior performance de sensibilidade (realocação), 107 dias. O lucro máximo para a regressão logística, apesar de não coincidir com o número de dias de treino para o máximo de precisão e sensibilidade, também apresentou seu máximo próximo do máximo de precisão encontrado. 
-        
   
   \chapter{Conclusões}
   
@@ -717,9 +768,9 @@
     
         \paragraph{}O presente trabalho teve como objetivo aplicar técnicas de aprendizado de máquina para gerar modelos de previsão de direção dos preços. A partir da validação utilizando testes históricos das séries temporais, foi possível verificar que a tomada de decisão apoiada por algoritmos de inteligência artificial pode ser muito mais eficaz do que uma simples análise técnica tradicional.
         
-        \paragraph{}Ao aplicar a estratégia definida para o caso de uso real das ações da Petrobrás (PETR4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão considerávelmente maior do que um modelo aleatório. Dessa forma, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
+        \paragraph{}Ao aplicar a estratégia definida para os casos de uso reais das ações da Petrobrás (PETR4) e do Itaú (ITUB4), foi possível observar que, mesmo para um grupo mínimo de dias de treino, o modelo apresentou uma precisão consideravelmente maior do que a de um modelo aleatório e um lucro máximo substancial. Ao comparar os resultados da PETR4 com os da ITUB4, é possível perceber que não necessariamente a precisão do modelo precisa estar acima da mínima segura para a geração de lucro. Devido à natureza do ativo e aos limites superior e inferior escolhidos para as ações da ITUB4, obtiveram-se lucros maiores do que para PETR4, mesmo essa última apresentando uma precisão segura. Dessa forma, já é possível a utilização do presente modelo para uma estratégia mais arrojada puramente baseada em aprendizado de máquina.
         
-        \paragraph{}Mesmo restringindo o caso de uso à análise de um ativo específico da BM\&FBOVESPA, o agrupamento dos dados foi implementado com o objetivo de ser generalizado para qualquer ativo do mercado financeiro em uma base diária de \textit{ticks} que defina o mesmo \textit{layout} da tabela \ref{tab:layout-neg}, incluindo mini-índices e opções. A flexibilização pensada no \textit{software} implementado para a geração dos indicadores de análise técnica também oferece a possibilidade de customização e adaptação para ativos com outra natureza de flutuação, permitindo análises adequadas aos mais diversos fatores que regem a oscilação dos preços de uma ação.
+        \paragraph{}Mesmo restringindo os casos de usos à análise de dois ativos específicos da BM\&FBOVESPA, o agrupamento dos dados foi implementado com o objetivo de ser generalizado para qualquer ativo do mercado financeiro em uma base diária de \textit{ticks} que defina o mesmo \textit{layout} da tabela \ref{tab:layout-neg}, incluindo mini-índices e opções. A flexibilização pensada no \textit{software} implementado para a geração dos indicadores de análise técnica também oferece a possibilidade de customização e adaptação para ativos com outra natureza de flutuação, permitindo análises adequadas aos mais diversos fatores que regem a oscilação dos preços de uma ação.
         
     \section{Trabalhos Futuros}
         
