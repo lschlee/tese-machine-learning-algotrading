@@ -17,6 +17,7 @@
   \author{Lucas}{Schlee de Brito Fernandes}
   \advisor{Prof.}{Heraldo}{Luís Silveira de Almeida}{D.Sc.}
 
+  \examiner{Prof.}{Heraldo Luís Silveira de Almeida}{D.Sc.}
   \examiner{Prof.}{Flávio Luis de Mello}{D.Sc.}
   \examiner{Prof.}{Jomar Gozzi}{D.Sc.}
   
@@ -171,7 +172,7 @@
     \paragraph{}Neste capítulo, são introduzidos alguns conceitos base para o entendimento e desenvolvimento do projeto. Nas próximas seções, são feitas contextualizações sobre o Mercado de Capitais, Bolsa de Valores e como os algoritmos de HFT se inserem nesse conexto.
     
     \section{Mercado de Capitais e Bolsa de Valores}
-        \paragraph{}O Mercado Capitais é um sistema de distribuição de valores imobiliários que permite potencializar o fluxo financeiro entre vários agentes econômicos, aumentando a liquidez dos vários títulos existentes. Esse mercado, formado por corretoras, bancos, bolsa de valores e outras insituições financeiras, facilita o investimento em grandes empreendimentos e permite aos diferenes agentes econômicos a compra de parte da empresa por meio de ações, que são as menores frações do capital social de uma empresa. As ações, por sua vez, são uma forma veloz de atração de investimento para que a empresa consiga reinvestir no seu próprio crescimento \cite{barreto-mercado-capitais}.
+        \paragraph{}O Mercado Capitais é um sistema de distribuição de valores mobiliários que permite potencializar o fluxo financeiro entre vários agentes econômicos, aumentando a liquidez dos vários títulos existentes. Esse mercado, formado por corretoras, bancos, bolsa de valores e outras insituições financeiras, facilita o investimento em grandes empreendimentos e permite aos diferenes agentes econômicos a compra de parte da empresa por meio de ações, que são as menores frações do capital social de uma empresa. As ações, por sua vez, são uma forma veloz de atração de investimento para que a empresa consiga reinvestir no seu próprio crescimento \cite{barreto-mercado-capitais}.
         
         \paragraph{}As operações que ocorrem no Mercado de Capitais possuem uma série de regras e procedimentos que garantem uma proteção para ambos os lados interessados. 
         
@@ -663,6 +664,10 @@
                 
     \chapter{Resultados e Discussões}
     
+        \paragraph{}Com o objetivo de puramente validar a aplicação dos modelos de aprendizado de máquina, o treinamento utilizou os modelos de Regressão Logística e \textit{Multi-Layer Perceptron} para a geração dos resultados obtidos. Por conta da complexidade associada ao cálculo do MLP, a varredura de treino para os ciclos de dias totalizou aproximadamente de 4 a 5 horas.
+        
+        \paragraph{}Em relação aos parâmetros de calibração para os modelos de aprendizado, foram utilizados os padrões definidos pelo próprio pacote do \textit{scikit-learn} \cite{scikit-learn} para ambos os modelos. 
+    
         \section{PETR4}
     
             \paragraph{}Como estudo de caso para o projeto, foi escolhida a análise sobre a PETR4, ações preferências da Petrobrás, empresa que voltou a ocupar em outubro de 2018 o título de mais valiosa do Brasil, chegando a bater a marca de R\$358 bilhões \cite{petr4-intro}. 
@@ -684,7 +689,7 @@
             
             São aplicados, então, os modelos de Regressão Logística e \textit{Multi-layer Percerptron} descritos em \ref{sec:models} para janela de treino, como detalhadado em \ref{sec:validation}. As figuras \ref{img:performance-logreg} e \ref{img:performance-mlp} mostram a performance de cada modelo com a medida das precisões e realocações sobre a quantidade de dias de treino. Dessa forma, é possível acompanhar a evolução das medidas até o máximo de cada métrica.
             
-            \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $62,57\%$ com 104 dias de treino e a máxima precisão foi de aproximadamente $75,73\%$, alcançada com 120 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $68,40\%$ com 107 dias, enquanto que sua maior precisão foi de $75,93\%$ com 119 dias de treino.
+            \paragraph{}Em ambos os gráficos, nota-se que tanto as realocações quanto as precisões apresentam uma curva ascendente até alcançarem o seu máximo, depois apresentam uma curva descendente. Na Regressão Logística, a máxima realocação observada foi de aproximadamente $62,70\%$ com 106 dias de treino e a máxima precisão foi de aproximadamente $76,34\%$, alcançada com 119 dias. Já no MLP, foi observada uma realocação máxima de aproximadamente $67,88\%$ com 104 dias, enquanto que sua maior precisão foi de $75,37\%$ com 119 dias de treino.
             
             \begin{figure}[h!]
                 \caption{Performance da Regressão Logística - PETR4}
@@ -718,7 +723,9 @@
                 \centering
             \end{figure}
             
-            \paragraph{}Pela evolução dos lucros obtidos, nota-se que existe um lucro crescente que acompanha a performance de ambos os modelos. Para o MLP, por exemplo, o máximo lucro obtido coincidiu com o número de dias necessários para obter a maior performance de sensibilidade (realocação), 107 dias. O lucro máximo para a regressão logística, apesar de não coincidir com o número de dias de treino para o máximo de precisão e sensibilidade, também apresentou seu máximo próximo do máximo de precisão encontrado. 
+            \paragraph{}Para uma base comparativa do resultado dos modelos com um modelo puramente aleatório, foram adicionadas 2 curvas no gráfico mostrando a evolução do lucro de um modelo puramente aleatório que enviasse o mesmo número de ordens de compra e venda que os modelos de aprendizado de máquina utilizados. Observa-se que, mesmo para ordens completamente aleatórias, foi possível observar um lucro positivo, indicando que o ativo sendo analisado apresentou uma alta constante durante o período de amostragem. Mesmo assim, pode-se distinguir claramente a diferença do lucro de movimentações aleatórias com o lucro dos modelos de aprendizado de máquina, sempre maiores durante todo o intervalo.
+            
+            \paragraph{}Pela evolução dos lucros obtidos, nota-se que existe um lucro crescente que acompanha a performance de ambos os modelos. Para a Regressão Logística, o máximo lucro obtido coincidiu com o número de dias necessários para obter a maior performance de sensibilidade (realocação), 106 dias. O lucro máximo para o MLP, apesar de não coincidir com o número de dias de treino para o máximo de precisão e sensibilidade, também esteve próximo do máximo de sensibilidade encontrado. 
             
     \section{ITUB4}
     
@@ -750,11 +757,11 @@
                 \centering
             \end{figure}
         
-        \paragraph{}Pelo MLP, foram necessários mais 27 dias para alcançar o máximo de precisão, $56,64\%$, do que pela Regressão Logística. Esse último, por sua vez, alcançou $56,63\%$ de precisão com 72 dias de treinamento. Para as realocações, ambos os modelos aparentaram ser capazes de progredirem suas performances, apresentando máximo somente ao fim da janela de dias de treino.
+        \paragraph{}Pelo MLP, foram necessários menos 12 dias para alcançar o máximo de precisão, $56,43\%$, do que pela Regressão Logística. Esse último, por sua vez, alcançou $56,60\%$ de precisão com 75 dias de treinamento. Para as realocações, ambos os modelos aparentaram ser capazes de progredirem suas performances, apresentando máximo somente ao fim da janela de dias de treino.
         
         \paragraph{}Ao comparar a suavidade das curvas, nota-se que a Regressão Logística apresentou muito menos ruído do que as curvas do MLP, tanto para a precisão quanto para a realocação.
         
-        \paragraph{}Para acompanhar a evolução dos lucros simulados dos modelos para ITUB4, foi gerada a figura \ref{img:lucro-itub4}. Nota-se que, mesmo a máxima precisão alcançada ter ficado abaixo da mínima precisão segura, o máximo lucro obtido pelos modelos para ITUB4, de $0,33$, foi maior do que o lucro obtido para as ações da PETR4, de aproximadamente $0,31$, que obteve uma taxa de precisão maior do que a segura.
+        \paragraph{}Para acompanhar a evolução dos lucros simulados dos modelos para ITUB4, foi gerada a figura \ref{img:lucro-itub4}. Nota-se que, mesmo a máxima precisão alcançada ter ficado abaixo da mínima precisão segura, o máximo lucro obtido pelos modelos para ITUB4, de $0,33$, foi maior do que o lucro obtido para as ações da PETR4, de aproximadamente $0,31$, que obteve uma taxa de precisão maior do que a segura. Em comparação com um modelo que envia aleatoriamente o mesmo número de ordens de compra e venda nos modelos de aprendizado, nota-se que a curva desses últimos foram sempre maiores. Assim como a PETR4, a ITUB4 também apresentou uma constância de altas no período de análise devido ao lucro positivo dos modelos aleatórios durante o intervalo de amostras.
         
         \begin{figure}[h!]
             \caption{Evolução do lucro dos modelos - ITUB4}
@@ -778,9 +785,13 @@
         
         \paragraph{}Em relação ao agrupamento dos dados, foi utilizada uma abordagem por separação de janelas de tempo e previsão de forma que uma janela de tempo nunca colidisse com a outra. Por causa disso, a implementação de janelas deslizantes no tempo podem ser úteis para aumentar a quantidade de dados adquiridos para o treinamento do modelo.
         
+        \paragraph{}Sobre os modelos de aprendizado aplicados, foram utilizadas calibrações padrão do \textit{scikit-learn}. Em um cenário real, torna-se necessária a otimização dos parâmetros de calibração de cada modelo em seu contexto específico, de modo a encontrar a melhor performance possível. Dessa maneira, sugere-se que seja feita programaticamente uma varredura de performance com várias combinações possíveis de entrada para que haja melhor adequação do modelo escolhido para cada situação.
+        
         \paragraph{}Para consumo diário de um agente autônomo responsável pelas negociações, ainda é necessária a aquisição manual dos dados nos servidores públicos da BM\&FBOVESPA e posterior execução do \textit{software} desenvolvido para o pré-processamento. Neste caso, uma solução de agendamento que recorrentemente verificasse a disponibilização de novos arquivos de negociação seguida de um pré-processamento e agrupamento dos mesmos poderia automatizar esse esforço.
         
         \paragraph{}Após treinado o modelo com os dados agrupados, torna-se necessária a exposição de um serviço que retorne o sinal de previsão do próximo intervalo baseado nas entradas de indicadores de análise técnica descritos ao longo do trabalho. Para garantir a disponibilidade desse serviço, torna-se interessante a hospedagem do mesmo em algum provedor de nuvem como \textit{Amazon Web Services} ou \textit{Google Cloud Computing}. A lógica a ser executada a cada requisição, dessa maneira, seria a predição desses dados de entrada em um modelo já treinado, salvo em um arquivo binário e carregado em memória para executar imediatamente as previsões.
+        
+        
   
 
   \backmatter
